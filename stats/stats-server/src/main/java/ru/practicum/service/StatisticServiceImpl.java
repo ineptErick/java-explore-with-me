@@ -11,7 +11,6 @@ import ru.practicum.repository.StatisticRepository;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -40,7 +39,6 @@ public class StatisticServiceImpl implements StatisticService {
             }
             result.sort(Comparator.comparing(StatisticGetDto::getHits).reversed());
         }
-
        return result;
     }
 
