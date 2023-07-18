@@ -35,7 +35,7 @@ public class StatisticClientController {
             @RequestParam(value = "start", required = true) String start,
             @RequestParam(value = "end", required = true) String end,
             @RequestParam(value = "uris", required = false) String[] uris,
-            @RequestParam(value = "isUnique", defaultValue = "false") Boolean isUnique) {
+            @RequestParam(value = "unique", defaultValue = "false") Boolean isUnique) {
         validation.dateIsValid(start);
         validation.dateIsValid(end);
         log.info("Запрос статистики с параметрами: \n start={} \n end={} \n isUnique={} \n uris={}", start, end, isUnique, uris);

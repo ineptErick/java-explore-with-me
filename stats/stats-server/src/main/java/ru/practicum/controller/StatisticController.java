@@ -29,7 +29,7 @@ public class StatisticController {
             @RequestParam(value = "start", required = true) String start,
             @RequestParam(value = "end", required = true) String end,
             @RequestParam(value = "uris", required = false) String[] uris,
-            @RequestParam(value = "isUnique", defaultValue = "false") Boolean isUnique) {
+            @RequestParam(value = "unique", defaultValue = "false") Boolean isUnique) {
         validation.dateIsValid(start);
         validation.dateIsValid(end);
         return statisticService.getStatistic(start, end, uris, isUnique);
