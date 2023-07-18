@@ -16,7 +16,7 @@ public class StatisticValidation {
     private Pattern datePattern = Pattern.compile("^(20[23][0-9])-([0][1-9]|[1][012])-([12][0-9]|[3][01]|[0][1-9]) " +
             "([0][1-9]|[1][0-9]|[2][0-3]|[0][0])[:]([0-5][0-9])[:]([0-5][0-9])$");
 
-    public boolean ipIsValid (String ip) {
+    public boolean ipIsValid(String ip) {
         if (!ipPattern.matcher(ip).matches()) {
             throw new BadRequest("Невалидный IP адрес.");
         }
@@ -30,7 +30,7 @@ public class StatisticValidation {
         return true;
     }
 
-    public void statisticDtoIsValid(StatisticPostDto statisticPostDto){
+    public void statisticDtoIsValid(StatisticPostDto statisticPostDto) {
         ipIsValid(statisticPostDto.getIp());
         dateIsValid(statisticPostDto.getTimestamp());
     }

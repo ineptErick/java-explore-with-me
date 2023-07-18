@@ -29,7 +29,7 @@ public class StatisticClient {
     protected ResponseEntity<Object> get(String path, String start, String end, String[] uris, Boolean isUnique) {
         StringBuilder fullPath = new StringBuilder().append(serverUrl).append(path);
         fullPath.append("?start=").append(start).append("&end=").append(end);
-        if (uris != null){
+        if (uris != null) {
             for (String uri: uris) {
                 fullPath.append("&uris=").append(uri);
             }

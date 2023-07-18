@@ -2,7 +2,6 @@ package ru.practicum.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.dto.StatisticDto;
 import ru.practicum.dto.StatisticGetDto;
 import ru.practicum.dto.StatisticPostDto;
 import ru.practicum.service.StatisticService;
@@ -26,7 +25,7 @@ public class StatisticController {
     }
 
     @GetMapping("/stats")
-    public List<StatisticGetDto> getStatistic (
+    public List<StatisticGetDto> getStatistic(
             @RequestParam(value = "start", required = true) String start,
             @RequestParam(value = "end", required = true) String end,
             @RequestParam(value = "uris", required = false) String[] uris,

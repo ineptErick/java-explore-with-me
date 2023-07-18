@@ -16,7 +16,7 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class StatisticServiceImpl implements StatisticService{
+public class StatisticServiceImpl implements StatisticService {
 
     private final StatisticRepository statisticRepository;
 
@@ -45,7 +45,7 @@ public class StatisticServiceImpl implements StatisticService{
         return statisticPostDto;
     }
 
-    private LocalDateTime stringToLocalDate (String date) {
+    private LocalDateTime stringToLocalDate(String date) {
         return LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 }
