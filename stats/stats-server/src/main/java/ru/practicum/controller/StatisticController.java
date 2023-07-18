@@ -1,6 +1,7 @@
 package ru.practicum.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.StatisticGetDto;
 import ru.practicum.dto.StatisticPostDto;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class StatisticController {
 
     private final StatisticService statisticService;
@@ -21,6 +23,7 @@ public class StatisticController {
     public StatisticPostDto addHit(
             @RequestBody StatisticPostDto statisticPostDto) {
         validation.statisticDtoIsValid(statisticPostDto);
+        log.info("Добавлен просмотр в статистику для URI: {}", statisticPostDto.getUri());
         return statisticService.addStatistic(statisticPostDto);
     }
 
@@ -32,6 +35,7 @@ public class StatisticController {
             @RequestParam(value = "unique", defaultValue = "false") Boolean isUnique) {
         validation.dateIsValid(start);
         validation.dateIsValid(end);
+        log.info("Запрос статистики с параметрами: \n start={} \n end={} \n isUnique={} \n uris={}", start, end, isUnique, uris);
         return statisticService.getStatistic(start, end, uris, isUnique);
     }
 
