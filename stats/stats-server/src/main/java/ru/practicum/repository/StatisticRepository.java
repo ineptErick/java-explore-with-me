@@ -16,7 +16,8 @@ public interface StatisticRepository  extends JpaRepository<Statistic, Long> {
     @Query(value = "SELECT s.uri, s.app, COUNT(*) AS hits " +
             "FROM statistic AS s " +
             "WHERE s.view_date BETWEEN ?1 AND ?2 " +
-            "GROUP BY s.uri, s.app ", nativeQuery = true)
+            "GROUP BY s.uri, s.app " +
+            "ORDER BY hits DESC ", nativeQuery = true)
     List<StatisticGetDto> getUrisViews(LocalDateTime start, LocalDateTime end);
 
     //Просмотры конкретного uri (не уникальные)
@@ -31,7 +32,8 @@ public interface StatisticRepository  extends JpaRepository<Statistic, Long> {
     @Query(value = "SELECT s.uri, s.app, COUNT(DISTINCT s.ip) AS hits " +
             "FROM statistic AS s " +
             "WHERE s.view_date BETWEEN ?1 AND ?2 " +
-            "GROUP BY s.uri, s.app ", nativeQuery = true)
+            "GROUP BY s.uri, s.app " +
+            "ORDER BY hits DESC ", nativeQuery = true)
     List<StatisticGetDto> getUrisViewsUnique(LocalDateTime start, LocalDateTime end);
 
     //Просмотры конкретного uri (уникальные)
