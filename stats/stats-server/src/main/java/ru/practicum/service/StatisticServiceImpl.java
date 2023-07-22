@@ -7,6 +7,7 @@ import ru.practicum.dto.StatisticGetDto;
 import ru.practicum.dto.StatisticPostDto;
 import ru.practicum.model.StatisticMapper;
 import ru.practicum.repository.StatisticRepository;
+import ru.practicum.model.Statistic;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -44,7 +45,7 @@ public class StatisticServiceImpl implements StatisticService {
 
     @Override
     public StatisticPostDto addStatistic(StatisticPostDto statisticPostDto) {
-        statisticRepository.save(StatisticMapper.INSTANT.toStatistic(statisticPostDto));
+        statisticRepository.save(StatisticMapper.toStatistic(statisticPostDto));
         return statisticPostDto;
     }
 

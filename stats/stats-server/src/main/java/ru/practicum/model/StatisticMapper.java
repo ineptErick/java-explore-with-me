@@ -5,10 +5,11 @@ import ru.practicum.dto.StatisticPostDto;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public enum StatisticMapper {
-    INSTANT;
+import ru.practicum.model.Statistic;
 
-    public StatisticPostDto toStatisticPostDto(Statistic statistic) {
+public final class StatisticMapper {
+
+    public static StatisticPostDto toStatisticPostDto(Statistic statistic) {
         StatisticPostDto statisticPostDto = new StatisticPostDto(
                 statistic.getIp(),
                 statistic.getUri(),
@@ -17,7 +18,7 @@ public enum StatisticMapper {
         return statisticPostDto;
     }
 
-    public Statistic toStatistic(StatisticPostDto statisticPostDto) {
+    public static Statistic toStatistic(StatisticPostDto statisticPostDto) {
         Statistic statistic = new Statistic();
         statistic.setApp(statisticPostDto.getApp());
         statistic.setIp(statisticPostDto.getIp());
