@@ -7,7 +7,6 @@ import ru.practicum.dto.StatisticGetDto;
 import ru.practicum.dto.StatisticPostDto;
 import ru.practicum.model.StatisticMapper;
 import ru.practicum.repository.StatisticRepository;
-import ru.practicum.model.Statistic;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
