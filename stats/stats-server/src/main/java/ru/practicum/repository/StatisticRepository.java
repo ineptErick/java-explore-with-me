@@ -1,14 +1,15 @@
 package ru.practicum.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 import ru.practicum.dto.StatisticGetDto;
 import ru.practicum.model.Statistic;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Repository("dbStatisticRepository")
+@Component("dbStatisticRepository")
 public interface StatisticRepository  extends JpaRepository<Statistic, Long> {
 
     //Просмотры всех uri (не уникальные)
