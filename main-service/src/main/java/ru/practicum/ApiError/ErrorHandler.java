@@ -1,6 +1,7 @@
 package ru.practicum.ApiError;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import org.postgresql.util.PSQLException;
+import ru.practicum.ApiError.exception.BadRequestException;
 import ru.practicum.ApiError.exception.ConflictException;
 import ru.practicum.ApiError.exception.NotFoundException;
 import ru.practicum.ApiError.exception.ValidationException;
@@ -34,7 +36,7 @@ public class ErrorHandler {
     @ResponseBody
     public ErrorResponse onMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         return new ErrorResponse(HttpStatus.BAD_REQUEST,
-                "Incorrectly made request.",
+                "Incorrectly made request (SQL).",
                 e.getMessage(),
                 LocalDateTime.now());
     }
@@ -44,7 +46,7 @@ public class ErrorHandler {
     @ResponseBody
     public ErrorResponse onBusyEmail(PSQLException e) {
         return new ErrorResponse(HttpStatus.CONFLICT,
-                "Incorrectly made request.",
+                "Incorrectly made request (SQL).",
                 e.getMessage(),
                 LocalDateTime.now());
     }
@@ -64,7 +66,7 @@ public class ErrorHandler {
     @ResponseBody
     public ErrorResponse onValidationException(ValidationException e) {
         return new ErrorResponse(HttpStatus.FORBIDDEN,
-                "Событие не удовлетворяет правилам создания",
+                "Событие не удовлетворяет правилам создания.",
                 e.getMessage(),
                 LocalDateTime.now());
     }
@@ -74,7 +76,27 @@ public class ErrorHandler {
     @ResponseBody
     public ErrorResponse onConflictException(ConflictException e) {
         return new ErrorResponse(HttpStatus.FORBIDDEN,
-                "Событие не удовлетворяет правилам редактирования",
+                "Событие не удовлетворяет правилам редактирования.",
+                e.getMessage(),
+                LocalDateTime.now());
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ErrorResponse onBadRequestException(BadRequestException e) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST,
+                "Некорректный запрос.",
+                e.getMessage(),
+                LocalDateTime.now());
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ErrorResponse onMethodNotAllowedException(HttpRequestMethodNotSupportedException e) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST,
+                "Такого метода нет.",
                 e.getMessage(),
                 LocalDateTime.now());
     }

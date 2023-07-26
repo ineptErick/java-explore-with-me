@@ -25,11 +25,19 @@ import ru.practicum.event.model.Event;
 import ru.practicum.event.model.EventMapper;
 import ru.practicum.event.repository.EventRepository;
 
+import ru.practicum.request.dto.EventRequestStatusUpdateRequest;
+import ru.practicum.request.dto.EventRequestStatusUpdateResult;
+import ru.practicum.request.dto.ParticipationRequestDto;
+import ru.practicum.request.enums.RequestStatus;
+import ru.practicum.request.model.Request;
+import ru.practicum.request.model.RequestMapper;
 import ru.practicum.request.repository.RequestRepository;
+import ru.practicum.request.service.RequestService;
 import ru.practicum.users.model.User;
 import ru.practicum.users.service.UsersService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -87,7 +95,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventShortDto> getAlUsersEvents(Integer from, Integer size, Long userId) {
+    public List<EventShortDto> getAllUsersEvents(Integer from, Integer size, Long userId) {
         Integer page = from / size;
         PageRequest pageRequest = PageRequest.of(page, size);
         log.info("Выгрузка списка мероприятий для пользователя с ID = {} с параметрами: size={}, from={}.",userId, size, page);
@@ -96,6 +104,81 @@ public class EventServiceImpl implements EventService {
         List<EventShortDto> requestsDto = EventMapper.INSTANT.toEventShortDto(requests);
         return requestsDto;
     }
+
+    @Override
+    public List<ParticipationRequestDto> getRequestsOnEvent(Long userId, Long eventId) {
+        log.info("Выгрузка списка запросов на участие в мероприятии с ID = {}.", eventId);
+        usersService.isUserPresent(userId);
+        Event event = getEventById(eventId);
+        if (!event.getInitiator().getId().equals(userId)) {
+            throw new BadRequestException("Только организатор может просматривать список запросов на участие.");
+        } else {
+            List<Request> request = requestRepository.findAllByEventId(eventId);
+            return RequestMapper.INSTANT.toParticipationRequestDto(request);
+        }
+    }
+
+    @Override
+    @Transactional
+    public EventRequestStatusUpdateResult processWithEventsRequests(
+            Long userId, Long eventId, EventRequestStatusUpdateRequest requests) {
+        log.info("Пользовать с ID = {} обрабатывает заявки на мероприятие с ID = {}.", userId, eventId);
+        usersService.isUserPresent(userId);
+        Event event = getEventById(eventId);
+        if (!event.getInitiator().getId().equals(userId)) {
+            throw new BadRequestException("Только организатор может обрабатывать список запросов на участие.");
+        }
+        if (!event.getRequestModeration()) {
+            throw new BadRequestException("Запросы не требуют модерации. Пре-модерация отключена.");
+        }
+        if (event.getParticipantLimit() == 0) {
+            throw new BadRequestException("Запросы не требуют модерации. Лимит на участников не установлен.");
+        }
+        EventRequestStatusUpdateResult eventRequestStatusUpdateResult = new EventRequestStatusUpdateResult();
+        List<Request> requestsList = requestRepository.findAllByIdInAndStatusEquals(
+                requests.getRequestIds(), RequestStatus.PENDING);
+        if (requests.getStatus().equals(RequestStatus.CONFIRMED)) {
+            int freePlaces = event.getParticipantLimit() - event.getParticipants().size();
+            int count = 0;
+            for (Request request: requestsList) {
+                checkRequestBeforeUpdate(event, request);
+                log.info("Обработка запроса с ID = {}.", request.getId());
+                if (freePlaces != count) {
+                    request.setStatus(RequestStatus.CONFIRMED);
+                    eventRequestStatusUpdateResult.getConfirmedRequests()
+                            .add(RequestMapper.INSTANT.toParticipationRequestDto(request));
+                    count++;
+                } else {
+                    request.setStatus(RequestStatus.REJECTED);
+                    eventRequestStatusUpdateResult.getRejectedRequests()
+                            .add(RequestMapper.INSTANT.toParticipationRequestDto(request));
+                }
+                log.debug("Статус запроса с ID = {} на \"{}\".", request.getId(), request.getStatus());
+            }
+        } else {
+            for (Request request: requestsList) {
+                checkRequestBeforeUpdate(event, request);
+                log.info("Обработка запроса с ID = {}.", request.getId());
+                request.setStatus(RequestStatus.REJECTED);
+                eventRequestStatusUpdateResult.getRejectedRequests()
+                        .add(RequestMapper.INSTANT.toParticipationRequestDto(request));
+                log.debug("Статус запроса с ID = {} на \"{}\".", request.getId(), RequestStatus.REJECTED);
+            }
+        }
+        requestRepository.saveAll(requestsList);
+        return eventRequestStatusUpdateResult;
+    }
+
+
+    void checkRequestBeforeUpdate(Event event, Request request) {
+        if (!request.getEvent().getId().equals(event.getId())) {
+            throw new BadRequestException("Запрос для другого мероприятия.");
+        }
+        if (!request.getStatus().equals(RequestStatus.PENDING)) {
+            throw new BadRequestException("Статус запроса отличен от PENDING.");
+        }
+    }
+
 
     @Override
     public Event updateEvent(Event updatedEvent, UpdateEventRequest updateEventRequest) {
@@ -180,4 +263,12 @@ public class EventServiceImpl implements EventService {
                 () -> new NotFoundException("Мероприятие с ID = " + eventId + " не найдено.")
         );
     }
+
+    @Override
+    public void isEventIsPresent(Long eventId) {
+        eventRepository.findById(eventId).orElseThrow(
+                () -> new NotFoundException("Мероприятие с ID = " + eventId + " не найдено.")
+        );
+    }
+
 }

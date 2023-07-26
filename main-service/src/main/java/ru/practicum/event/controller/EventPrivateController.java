@@ -9,6 +9,9 @@ import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.NewEventDto;
 import ru.practicum.event.dto.UpdateEventRequest;
 import ru.practicum.event.service.EventService;
+import ru.practicum.request.dto.EventRequestStatusUpdateRequest;
+import ru.practicum.request.dto.EventRequestStatusUpdateResult;
+import ru.practicum.request.dto.ParticipationRequestDto;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -51,11 +54,28 @@ public class EventPrivateController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<EventShortDto> getAlUsersEvents(
+    public List<EventShortDto> getAllUsersEvents(
             @Positive @PathVariable Long userId,
             @PositiveOrZero @RequestParam(value = "from", defaultValue = "0") Integer from,
             @Positive @RequestParam(value = "size", defaultValue = "10") Integer size) {
-        return eventService.getAlUsersEvents(from, size, userId);
+        return eventService.getAllUsersEvents(from, size, userId);
+    }
+
+    @GetMapping("/{eventId}/requests")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ParticipationRequestDto> getRequestsOnEvent(
+            @Positive @PathVariable Long userId,
+            @Positive @PathVariable Long eventId) {
+        return eventService.getRequestsOnEvent(userId, eventId);
+    }
+
+    @PatchMapping("/{eventId}/requests")
+    @ResponseStatus(HttpStatus.OK)
+    public EventRequestStatusUpdateResult processWithEventsRequests(
+            @Valid @RequestBody EventRequestStatusUpdateRequest requests,
+            @Positive @PathVariable Long userId,
+            @Positive @PathVariable Long eventId) {
+        return eventService.processWithEventsRequests(userId, eventId, requests);
     }
 
 
@@ -67,13 +87,7 @@ public class EventPrivateController {
         return categoryService.createCategory(newCategory);
     }
 
-    @PatchMapping("/{catId}")
-    @ResponseStatus(HttpStatus.OK)
-    public CategoryDto patchCategoryById(
-            @Valid @RequestBody NewCategoryDto updatedCategory,
-            @Positive @PathVariable Long catId) {
-        return categoryService.patchCategoryById(catId, updatedCategory);
-    }
+
 
     @DeleteMapping("/{catId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
