@@ -1,4 +1,4 @@
-package ru.practicum.request;
+package ru.practicum.request.model;
 
 import lombok.Data;
 import ru.practicum.event.model.Event;

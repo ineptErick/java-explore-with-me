@@ -1,7 +1,7 @@
 package ru.practicum.event.dto;
 
 import ru.practicum.category.dto.CategoryDto;
-import ru.practicum.location.Location;
+import ru.practicum.location.LocationDto;
 import ru.practicum.users.dto.UserShortDto;
 
 public class EventFullDto {
@@ -22,7 +22,7 @@ public class EventFullDto {
     //Пользователь (краткая информация)
     private UserShortDto initiator;
     //Широта и долгота места проведения события
-    private Location location;
+    private LocationDto location;
     //Нужно ли оплачивать участие
     private Boolean paid;
     //Ограничение на количество участников. Значение 0 - означает отсутствие ограничения

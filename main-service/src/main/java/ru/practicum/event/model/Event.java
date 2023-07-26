@@ -49,4 +49,8 @@ public class Event {
 
     private String title;
 
+
+//    @OneToMany
+//    @JoinColumn(name = "id")
+//    private List<User> users;
 }

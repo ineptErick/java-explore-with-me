@@ -1,6 +1,6 @@
 package ru.practicum.event.dto;
 
-import ru.practicum.location.Location;
+import ru.practicum.location.LocationDto;
 
 //Данные для изменения информации о событии. Если поле в запросе не указано (равно null) -
 //значит изменение этих данных не требуется.
@@ -18,7 +18,7 @@ public class UpdateEventUserRequest {
     //Новые дата и время на которые намечено событие в формате "yyyy-MM-dd HH:mm:ss"
     private String eventDate;
     //Широта и долгота места проведения события
-    private Location location;
+    private LocationDto location;
     //Новое значение флага о платности мероприятия
     private Boolean paid;
     //Новый лимит пользователей

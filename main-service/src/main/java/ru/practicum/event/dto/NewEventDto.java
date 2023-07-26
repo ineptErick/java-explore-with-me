@@ -1,6 +1,6 @@
 package ru.practicum.event.dto;
 
-import ru.practicum.location.Location;
+import ru.practicum.location.LocationDto;
 
 //Новое событие
 public class NewEventDto {
@@ -17,7 +17,7 @@ public class NewEventDto {
     //Дата и время на которые намечено событие в формате "yyyy-MM-dd HH:mm:ss"
     private String eventDate;
     //Широта и долгота места проведения события
-    private Location location;
+    private LocationDto location;
     //Нужно ли оплачивать участие в событии
     //default: false
     private Boolean paid;
