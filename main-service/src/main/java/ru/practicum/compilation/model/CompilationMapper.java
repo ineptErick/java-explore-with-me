@@ -7,6 +7,7 @@ import ru.practicum.event.model.EventMapper;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public enum CompilationMapper {
     INSTANT;
@@ -26,5 +27,18 @@ public enum CompilationMapper {
                 .events(EventMapper.INSTANT.toEventShortDto(compilation.getEvents()))
                 .pinned(compilation.getPinned())
                 .build();
+    }
+
+    public Compilation toCompilation(Compilation compilationOld, List<Event> events) {
+        return Compilation.builder()
+                .id(compilationOld.getId())
+                .pinned(Optional.ofNullable(compilationOld.getPinned()).orElse(false))
+                .title(compilationOld.getTitle())
+                .events(events)
+                .build();
+    }
+
+    public List<CompilationDto> toCompilationDto(List<Compilation> compilations) {
+        return compilations.stream().map(CompilationMapper.INSTANT::toCompilationDto).collect(Collectors.toList());
     }
 }

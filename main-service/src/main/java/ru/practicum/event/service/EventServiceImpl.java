@@ -16,7 +16,6 @@ import ru.practicum.ApiError.exception.ValidationException;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.model.CategoryMapper;
 import ru.practicum.category.service.CategoryService;
-import ru.practicum.event.comparator.EventShortSortByDate;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.NewEventDto;
@@ -306,6 +305,7 @@ public class EventServiceImpl implements EventService {
         return EventMapper.INSTANT.iterableToList(foundEvents);
     }
 
+    //TODO проверить (сортировка) + hit в стат
     @Override
     public List<EventShortDto> getEventsByPublic(
             String text, Set<Long> categories, Boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd,
@@ -353,5 +353,22 @@ public class EventServiceImpl implements EventService {
 //                .sorted(Comparator.comparing(EventShortSortByDate, EventShortDto::getEventDate).collect(Collectors.toList());
         return EventMapper.INSTANT.toEventShortDto(events);
     }
+
+    @Override
+    public EventFullDto getEventByIdPubic(Long eventId) {
+        Event event = eventRepository.findFirstByIdAndState(eventId, EventState.PUBLISHED.toString());
+        if (event != null) {
+            return EventMapper.INSTANT.toEventFullDto(event);
+        } else {
+            throw new NotFoundException("Мероприятие с ID = " + eventId + " не найдено.");
+        }
+    }
+
+    @Override
+    public List<Event> getEventByIds(List<Long> events) {
+        log.info("Выгрузка списка мероприятий по списку ID.");
+        return eventRepository.getByIdIn(events);
+    }
+
 
 }

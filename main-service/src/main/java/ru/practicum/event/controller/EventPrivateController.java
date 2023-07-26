@@ -78,38 +78,4 @@ public class EventPrivateController {
         return eventService.processWithEventsRequests(userId, eventId, requests);
     }
 
-
-    /*
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public CategoryDto createCategory(
-            @Valid @RequestBody NewCategoryDto newCategory) {
-        return categoryService.createCategory(newCategory);
-    }
-
-
-
-    @DeleteMapping("/{catId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCategory(
-            @Positive @PathVariable Long catId) {
-        categoryService.deleteCategory(catId);
-    }
-
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<CategoryDto> getAllCategories(
-            @PositiveOrZero @RequestParam(value = "from", defaultValue = "0") Integer from,
-            @Positive @RequestParam(value = "size", defaultValue = "10") Integer size) {
-        return categoryService.getAllCategories(from, size);
-    }
-
-    @GetMapping("/{catId}")
-    @ResponseStatus(HttpStatus.OK)
-    public CategoryDto getAllCategories(
-            @Positive @PathVariable Long catId) {
-        return categoryService.getCategoryById(catId);
-    }
-     */
-
 }

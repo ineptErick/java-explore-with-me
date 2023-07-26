@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.enums.EventSort;
 import ru.practicum.event.service.EventService;
@@ -42,5 +43,13 @@ public class EventPublicController {
         rangeEnd = rangeEnd == null ? rangeStart.plusYears(100) : rangeEnd;
         return eventService.getEventsByPublic(
                 text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
+    }
+
+    //todo добавить с стат
+    @GetMapping("/{eventId}")
+    @ResponseStatus(HttpStatus.OK)
+    public EventFullDto getEventByIdPubic(
+            @Positive @PathVariable Long eventId) {
+        return eventService.getEventByIdPubic(eventId);
     }
 }
