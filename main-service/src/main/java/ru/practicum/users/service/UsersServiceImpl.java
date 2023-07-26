@@ -62,7 +62,6 @@ public class UsersServiceImpl implements UsersService {
                     .collect(Collectors.toList());
             return requestsDto;
         }
-
     }
 
     @Override

@@ -26,4 +26,5 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
             "AND r.event_id = ?2 " +
             "LIMIT 1", nativeQuery = true)
     Request findByUserIdAndEventId(Long userId, Long eventId);
+
 }

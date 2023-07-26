@@ -13,4 +13,5 @@ public enum EventSort {
                 .filter(state -> state.name().equalsIgnoreCase(stringState))
                 .findFirst();
     }
+
 }

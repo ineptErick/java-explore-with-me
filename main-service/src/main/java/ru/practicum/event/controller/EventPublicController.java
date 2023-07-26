@@ -53,4 +53,5 @@ public class EventPublicController {
             @Positive @PathVariable Long eventId, HttpServletRequest request) {
         return eventService.getEventByIdPubic(eventId, request);
     }
+
 }

@@ -12,7 +12,6 @@ import java.util.Set;
 @Repository(value = "dbUsersRepository")
 public interface UsersRepository extends JpaRepository<User, Long> {
 
-    //Выгрузка всех конкретных пользователей по ID
     @Query(value = "SELECT * " +
             "FROM users AS u " +
             "WHERE u.user_id IN ?1 " +
@@ -20,4 +19,5 @@ public interface UsersRepository extends JpaRepository<User, Long> {
     Page<User> getAllUsersById(PageRequest pageRequest, Set<Long> usersIds);
 
     User findFirstByEmail(String email);
+
 }

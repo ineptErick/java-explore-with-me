@@ -42,7 +42,4 @@ public class RequestController {
         return requestService.cancelRequestByRequester(userId, requestId);
     }
 
-
-
-
 }

@@ -11,5 +11,6 @@ public interface StatisticService {
 
     EndpointHit save(EndpointHit endpointHit);
 
-    List<ViewStats> getStatistic(String path, Map<String, String> params, Set<String> uris);
+    List<ViewStats> getStatistic(Map<String, String> params, Set<String> uris);
+
 }

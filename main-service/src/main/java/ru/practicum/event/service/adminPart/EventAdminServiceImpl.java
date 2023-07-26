@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.category.utils.CategoryUtils;
+import ru.practicum.client.Client;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.UpdateEventRequest;
 import ru.practicum.event.enums.EventState;
@@ -20,7 +21,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -33,6 +33,7 @@ public class EventAdminServiceImpl implements EventAdminService {
 
     private final EventUtils eventUtils;
 
+    private final Client client;
 
     @Override
     public List<EventFullDto> getAllEventsByAdmin(
@@ -63,7 +64,8 @@ public class EventAdminServiceImpl implements EventAdminService {
         PageRequest pageRequest = PageRequest.of(page, size);
         Iterable<Event> foundEvents = eventRepository.findAll(
                 byUsers.and(byStates).and(byCategories).and(byDate), pageRequest);
-        return EventMapper.INSTANT.iterableToList(foundEvents);
+        return client.setViewsEventFullDtoList(
+                EventMapper.INSTANT.iterableToList(foundEvents));
     }
 
     @Override
@@ -78,11 +80,10 @@ public class EventAdminServiceImpl implements EventAdminService {
             eventUtils.checkIfEvenDateCorrect(updateEvent.getEventDate());
         }
         log.debug("Администратор обновил мероприятие с ID = {}.", eventId);
-        return EventMapper.INSTANT.toEventFullDto(
-                eventRepository.save(
-                        eventUtils.updateEvent(eventForUpdate, updateEvent, true)));
+        return client.setViewsEventFullDto(
+                EventMapper.INSTANT.toEventFullDto(
+                        eventRepository.save(
+                                eventUtils.updateEvent(eventForUpdate, updateEvent, true))));
     }
-
-
 
 }

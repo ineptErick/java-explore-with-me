@@ -21,4 +21,5 @@ public class EventRequestStatusUpdateRequest {
 
     @NotNull
     private RequestStatus status;
+
 }

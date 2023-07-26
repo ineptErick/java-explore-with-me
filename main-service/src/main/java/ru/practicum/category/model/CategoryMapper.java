@@ -25,4 +25,5 @@ public enum CategoryMapper {
                 .name(categoryDto.getName())
                 .build();
     }
+
 }

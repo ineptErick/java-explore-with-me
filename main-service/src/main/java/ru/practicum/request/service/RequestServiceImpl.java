@@ -101,4 +101,5 @@ public class RequestServiceImpl implements RequestService {
                 () -> new NotFoundException("Запрос на участие с ID = " + requestId + " не найден.")
         );
     }
+
 }

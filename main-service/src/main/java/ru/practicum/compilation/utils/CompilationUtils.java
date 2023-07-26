@@ -20,4 +20,5 @@ public class CompilationUtils {
                 () -> new NotFoundException("Подборка с ID = " + compId + " не найдена.")
         );
     }
+
 }

@@ -24,4 +24,5 @@ public enum HitMapper {
                 endpointHit.getTimestamp()
         );
     }
+
 }

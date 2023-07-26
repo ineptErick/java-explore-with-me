@@ -14,4 +14,5 @@ public enum RequestStatus {
                 .filter(state -> state.name().equalsIgnoreCase(stringState))
                 .findFirst();
     }
+
 }

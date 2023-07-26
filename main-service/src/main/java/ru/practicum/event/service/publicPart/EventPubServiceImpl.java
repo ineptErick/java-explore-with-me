@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ApiError.exception.NotFoundException;
 import ru.practicum.StatsClient;
+import ru.practicum.client.Client;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.enums.EventSort;
@@ -35,6 +36,8 @@ public class EventPubServiceImpl implements EventPubService {
 
     private final StatsClient statisticClient;
 
+    private final Client client;
+
     @Override
     public List<EventShortDto> getEventsByPublic(
             String text, Set<Long> categories, Boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd,
@@ -51,12 +54,6 @@ public class EventPubServiceImpl implements EventPubService {
         BooleanExpression byDescription;
         BooleanExpression byState = QEvent.event.state.eq(EventState.PUBLISHED);
         int page = from / size;
-        String sorting;
-        if (sort.equals(EventSort.EVENT_DATE)) {
-            sorting = "eventDate";
-        } else {
-            sorting = "views";
-        }
         Pageable pageable = PageRequest.of(page, size);
         if (categories.isEmpty()) {
             byCategories = QEvent.event.category.id.notIn(categories);
@@ -78,7 +75,8 @@ public class EventPubServiceImpl implements EventPubService {
             events.removeIf(event -> event.getParticipants().size() == event.getParticipantLimit());
         }
         statisticClient.createHit(request.getRequestURI(), request.getRemoteAddr());
-        return EventMapper.INSTANT.toEventShortDto(events);
+        return client.setViewsEventShortDtoList(
+                EventMapper.INSTANT.toEventShortDto(events));
     }
 
     @Override
@@ -86,7 +84,8 @@ public class EventPubServiceImpl implements EventPubService {
         Event event = eventRepository.findFirstByIdAndState(eventId, EventState.PUBLISHED);
         if (event != null) {
             statisticClient.createHit(request.getRequestURI(), request.getRemoteAddr());
-            return EventMapper.INSTANT.toEventFullDto(event);
+            return client.setViewsEventFullDto(
+                    EventMapper.INSTANT.toEventFullDto(event));
         } else {
             throw new NotFoundException("Мероприятие с ID = " + eventId + " не найдено.");
         }

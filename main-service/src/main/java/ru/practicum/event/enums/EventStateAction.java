@@ -5,4 +5,5 @@ public enum EventStateAction {
     REJECT_EVENT,
     SEND_TO_REVIEW,
     CANCEL_REVIEW
+
 }

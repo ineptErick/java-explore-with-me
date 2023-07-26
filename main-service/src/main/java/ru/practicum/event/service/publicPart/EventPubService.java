@@ -13,7 +13,8 @@ import java.util.Set;
 public interface EventPubService {
 
     List<EventShortDto> getEventsByPublic(String text, Set<Long> categories, Boolean paid, LocalDateTime rangeStart,
-                                          LocalDateTime rangeEnd, Boolean onlyAvailable, EventSort sort, Integer from, Integer size, HttpServletRequest request);
+                                          LocalDateTime rangeEnd, Boolean onlyAvailable, EventSort sort, Integer from,
+                                          Integer size, HttpServletRequest request);
 
     EventFullDto getEventByIdPubic(Long eventId, HttpServletRequest request);
 

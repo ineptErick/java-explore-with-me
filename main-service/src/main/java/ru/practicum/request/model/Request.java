@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 @Builder
 @Table(name = "requests")
 public class Request {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "request_id", nullable = false)
@@ -38,4 +39,5 @@ public class Request {
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User requester;
+
 }

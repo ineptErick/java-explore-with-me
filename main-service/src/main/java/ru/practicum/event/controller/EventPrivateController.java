@@ -26,7 +26,6 @@ public class EventPrivateController {
 
     private final EventPrivService eventService;
 
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public EventFullDto createEvent(

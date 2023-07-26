@@ -62,7 +62,6 @@ public class EventUtils {
         }
     }
 
-
     public Event getEventById(Long eventId) {
         log.info("Получение мероприятия по ID = {}.", eventId);
         return eventRepository.findById(eventId).orElseThrow(
@@ -113,4 +112,5 @@ public class EventUtils {
         log.info("Выгрузка списка мероприятий по списку ID.");
         return eventRepository.getByIdIn(events);
     }
+
 }

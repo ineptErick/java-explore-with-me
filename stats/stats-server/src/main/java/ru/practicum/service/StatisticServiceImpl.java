@@ -22,7 +22,7 @@ public class StatisticServiceImpl implements StatisticService {
     private final StatisticRepository statisticRepository;
 
     @Override
-    public List<ViewStats> getStatistic(String path, Map<String, String> params, Set<String> uris) {
+    public List<ViewStats> getStatistic(Map<String, String> params, Set<String> uris) {
         boolean isUnique = params.containsKey("unique") ? Boolean.parseBoolean(params.get("unique")) : false;
         uris = uris == null ? new HashSet<>() : uris;
         if (uris.size() > 0 && !isUnique) {
@@ -51,4 +51,5 @@ public class StatisticServiceImpl implements StatisticService {
     private LocalDateTime stringToLocalDate(String date) {
         return LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
+
 }

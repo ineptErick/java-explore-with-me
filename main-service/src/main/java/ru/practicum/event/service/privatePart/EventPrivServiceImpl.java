@@ -53,8 +53,6 @@ public class EventPrivServiceImpl implements EventPrivService {
 
     private final Client client;
 
-
-
     @Override
     @Transactional
     public EventFullDto createEvent(Long userId, NewEventDto newEvent) {
@@ -68,7 +66,8 @@ public class EventPrivServiceImpl implements EventPrivService {
         eventRepository.save(event);
         log.debug("Пользователь с ID = {} создал мероприятие \"{}\". ID = {}.",
                 userId, newEvent.getTitle(), event.getId());
-        return EventMapper.INSTANT.toEventFullDto(event);
+        return client.setViewsEventFullDto(
+                EventMapper.INSTANT.toEventFullDto(event));
     }
 
     @Override
@@ -82,19 +81,19 @@ public class EventPrivServiceImpl implements EventPrivService {
         User user = usersService.getUserById(userId);
         eventUtils.checkIfEventCanBeUpdated(updateEvent, eventForUpdate, user);
         log.debug("Пользователь с ID = {} обновил мероприятие с ID = {}.", userId, eventId);
-        return EventMapper.INSTANT.toEventFullDto(
-                eventRepository.save(
-                        eventUtils.updateEvent(eventForUpdate, updateEvent, false)));
+        return client.setViewsEventFullDto(
+                EventMapper.INSTANT.toEventFullDto(
+                        eventRepository.save(
+                                eventUtils.updateEvent(eventForUpdate, updateEvent, false))));
     }
 
     @Override
     public EventFullDto getFullEventById(Long userId, Long eventId) {
         log.info("Пользователь с ID = {} запросил информации о мероприятии с ID = {}.", userId, eventId);
         usersService.isUserPresent(userId);
-        EventFullDto fullDto = EventMapper.INSTANT.toEventFullDto(eventUtils.getEventById(eventId));
-        //client.setViewsToEventFullDto(fullDto);
-        return fullDto;/*client.setViewsToEventFullDto(
-                EventMapper.INSTANT.toEventFullDto(eventUtils.getEventById(eventId)));*/
+        return client.setViewsEventFullDto(
+                EventMapper.INSTANT.toEventFullDto(
+                        eventUtils.getEventById(eventId)));
     }
 
     @Override
@@ -105,7 +104,7 @@ public class EventPrivServiceImpl implements EventPrivService {
         Page<Event> pageEvents = eventRepository.getAllEventsByUserId(userId, pageRequest);
         List<Event> requests = pageEvents.getContent();
         List<EventShortDto> requestsDto = EventMapper.INSTANT.toEventShortDto(requests);
-        return requestsDto;
+        return client.setViewsEventShortDtoList(requestsDto);
     }
 
     @Override
@@ -121,7 +120,6 @@ public class EventPrivServiceImpl implements EventPrivService {
         }
     }
 
-    //TODO проверить работу метода
     @Override
     @Transactional
     public EventRequestStatusUpdateResult processWithEventsRequests(
@@ -176,7 +174,6 @@ public class EventPrivServiceImpl implements EventPrivService {
         return eventRequestStatusUpdateResult;
     }
 
-
     void checkRequestBeforeUpdate(Event event, Request request) {
         if (!request.getEvent().getId().equals(event.getId())) {
             throw new BadRequestException("Запрос для другого мероприятия.");
@@ -185,6 +182,5 @@ public class EventPrivServiceImpl implements EventPrivService {
             throw new BadRequestException("Статус запроса отличен от PENDING.");
         }
     }
-
 
 }

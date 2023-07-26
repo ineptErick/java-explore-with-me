@@ -14,4 +14,5 @@ public enum EventState {
                 .filter(state -> state.name().equalsIgnoreCase(stringState))
                 .findFirst();
     }
+
 }

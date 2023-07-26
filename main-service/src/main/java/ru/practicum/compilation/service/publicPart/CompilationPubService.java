@@ -10,4 +10,5 @@ public interface CompilationPubService {
     CompilationDto getCompilationByIdPublic(Long compId);
 
     List<CompilationDto> getComplicationsPublic(Boolean pinned, Integer from, Integer size);
+
 }

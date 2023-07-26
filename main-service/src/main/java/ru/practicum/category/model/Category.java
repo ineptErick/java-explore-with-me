@@ -24,4 +24,5 @@ public class Category {
     @NotBlank
     @Column(name = "name", nullable = false, unique = true)
     private String name;
+
 }

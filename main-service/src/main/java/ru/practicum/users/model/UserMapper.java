@@ -28,4 +28,5 @@ public enum UserMapper {
                 .email(newUserRequest.getEmail())
                 .build();
     }
+
 }

@@ -39,6 +39,9 @@ public enum CompilationMapper {
     }
 
     public List<CompilationDto> toCompilationDto(List<Compilation> compilations) {
-        return compilations.stream().map(CompilationMapper.INSTANT::toCompilationDto).collect(Collectors.toList());
+        return compilations.stream()
+                .map(CompilationMapper.INSTANT::toCompilationDto)
+                .collect(Collectors.toList());
     }
+
 }

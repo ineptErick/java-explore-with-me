@@ -23,6 +23,7 @@ public interface EventPrivService {
 
     List<ParticipationRequestDto> getRequestsOnEvent(Long userId, Long eventId);
 
-    EventRequestStatusUpdateResult processWithEventsRequests(Long userId, Long eventId, EventRequestStatusUpdateRequest requests);
+    EventRequestStatusUpdateResult processWithEventsRequests(Long userId, Long eventId,
+                                                             EventRequestStatusUpdateRequest requests);
 
 }

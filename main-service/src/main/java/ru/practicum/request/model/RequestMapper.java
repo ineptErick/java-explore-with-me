@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public enum RequestMapper {
+
     INSTANT;
 
     public ParticipationRequestDto toParticipationRequestDto(Request request) {
@@ -24,4 +25,5 @@ public enum RequestMapper {
                 .map(request -> toParticipationRequestDto(request))
                 .collect(Collectors.toList());
     }
+
 }

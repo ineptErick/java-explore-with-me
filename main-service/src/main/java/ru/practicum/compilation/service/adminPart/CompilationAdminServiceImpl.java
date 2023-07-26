@@ -30,7 +30,6 @@ public class CompilationAdminServiceImpl implements CompilationAdminService {
 
     private final CompilationUtils compilationUtils;
 
-
     @Override
     @Transactional
     public CompilationDto createCompilation(NewCompilationDto newCompilation) {
@@ -56,7 +55,6 @@ public class CompilationAdminServiceImpl implements CompilationAdminService {
         log.debug("Администратор обновил подборку \"{}\" с ID = {}.", compilation.getTitle(), compilation.getId());
             return CompilationMapper.INSTANT.toCompilationDto(compilation);
     }
-
 
     @Override
     @Transactional

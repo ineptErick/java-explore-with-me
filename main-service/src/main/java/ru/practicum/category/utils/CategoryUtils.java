@@ -53,4 +53,5 @@ public class CategoryUtils {
             throw new ConflictException("Категория c ID = " + catId + " используется и не может быть удалена.");
         }
     }
+
 }

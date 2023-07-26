@@ -22,4 +22,5 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
             "FROM categories AS c " +
             "ORDER BY c.category_id ASC ", nativeQuery = true)
     Page<Category> getAllCategoriesById(PageRequest pageRequest);
+
 }

@@ -25,7 +25,6 @@ public class CompilationPubServiceImpl implements CompilationPubService {
 
     private final CompilationUtils compilationUtils;
 
-
     @Override
     public CompilationDto getCompilationByIdPublic(Long compId) {
         return CompilationMapper.INSTANT.toCompilationDto(

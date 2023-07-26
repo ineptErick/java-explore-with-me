@@ -9,7 +9,9 @@ import lombok.*;
 public class ViewStats {
 
     private String app;
+
     private String uri;
+
     private Long hits;
 
     public ViewStats(String app, Long hits, String uri) {
@@ -17,4 +19,5 @@ public class ViewStats {
         this.hits = hits;
         this.uri = uri;
     }
+
 }

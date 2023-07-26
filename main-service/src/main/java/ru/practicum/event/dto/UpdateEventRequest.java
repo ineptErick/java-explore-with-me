@@ -33,4 +33,5 @@ public class UpdateEventRequest {
     private EventStateAction stateAction;
 
     private String title;
+
 }
