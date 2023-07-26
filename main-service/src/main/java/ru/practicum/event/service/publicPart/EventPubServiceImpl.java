@@ -78,7 +78,7 @@ public class EventPubServiceImpl implements EventPubService {
         if (onlyAvailable) {
             events.removeIf(event -> event.getParticipants().size() == event.getParticipantLimit());
         }
-        //statisticClient.createHit(request.getRequestURI(), request.getRemoteAddr());
+//        statisticClient.createHit(request.getRequestURI(), request.getRemoteAddr());
         return EventMapper.INSTANT.toEventShortDto(events);
     }
 
