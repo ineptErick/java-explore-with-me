@@ -22,7 +22,7 @@ public interface EventService {
 
     EventFullDto createEvent(Long userId, NewEventDto newEvent);
 
-    EventFullDto updateEventByUser(Long userId, Long eventId, UpdateEventRequest updateEventByUser);
+    EventFullDto updateEvent(Long userId, Long eventId, UpdateEventRequest updateEventByUser, Boolean isAdmin, Boolean isOwner);
 
     Event updateEvent(Event updatedEvent, UpdateEventRequest updateEventRequest);
 
@@ -48,5 +48,7 @@ public interface EventService {
 
     void isEventIsPresent(Long eventId);
 
-    List<EventFullDto> getAllEventsByAdmin(Set<Long> users, Set<EventState> states, Set<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size, EventSort sortBy);
+    List<EventFullDto> getAllEventsByAdmin(Set<Long> users, Set<EventState> states, Set<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size);
+
+    List<EventShortDto> getEventsByPublic(String text, Set<Long> categories, Boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, EventSort sort, Integer from, Integer size);
 }

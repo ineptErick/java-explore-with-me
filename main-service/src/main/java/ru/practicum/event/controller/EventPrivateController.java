@@ -41,7 +41,7 @@ public class EventPrivateController {
             @Positive @PathVariable Long userId,
             @Positive @PathVariable Long eventId,
             @Valid @RequestBody UpdateEventRequest updatedEventByUser) {
-        return eventService.updateEventByUser(userId, eventId, updatedEventByUser);
+        return eventService.updateEvent(userId, eventId, updatedEventByUser, false, true);
     }
 
     @GetMapping("/{eventId}")

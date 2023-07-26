@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ApiError.exception.BadRequestException;
@@ -15,6 +16,7 @@ import ru.practicum.ApiError.exception.ValidationException;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.model.CategoryMapper;
 import ru.practicum.category.service.CategoryService;
+import ru.practicum.event.comparator.EventShortSortByDate;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.NewEventDto;
@@ -38,9 +40,7 @@ import ru.practicum.users.model.User;
 import ru.practicum.users.service.UsersService;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 
 @Service
@@ -101,7 +101,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventFullDto getFullEventById(Long userId, Long eventId) {
         log.info("Пользователь с ID = {} запросил информации о мероприятии с ID = {}.", userId, eventId);
-        usersService.isUserPresent(eventId);
+        usersService.isUserPresent(userId);
         return EventMapper.INSTANT.toEventFullDto(getEventById(eventId));
     }
 
@@ -213,18 +213,9 @@ public class EventServiceImpl implements EventService {
         Optional.ofNullable(updateEventRequest.getStateAction()).ifPresent(
                 s -> setEventStateByEventStateAction(updatedEvent, updateEventRequest.getStateAction())
         );
-        Optional.ofNullable(updateEventRequest.getTitle()).ifPresent(updateEventRequest::setTitle);
+        Optional.ofNullable(updateEventRequest.getTitle()).ifPresent(updatedEvent::setTitle);
         return updatedEvent;
     }
-
-
-
-
-
-
-
-
-
 
     @Override
     public void checkIfEventCanBeUpdated(UpdateEventRequest updatedEven, Event oldEvent, User user) {
@@ -249,14 +240,6 @@ public class EventServiceImpl implements EventService {
             throw new ValidationException("Некорректная дата начала мероприятия. (Меньше 2-х часов до начала).");
         }
     }
-
-/*    @Override
-    public void checkIfEvenEventChangedByInitiator(Event event, User user) {
-        if (!event.getInitiator().getId().equals(user.getId())) {
-            log.error("Только инициатор или администратор могут менять мероприятие.");
-            throw new BadRequestException("Только инициатор или администратор могут менять мероприятие.");
-        }
-    }*/
 
     @Override
     public void setEventStateByEventStateAction(Event event, EventStateAction eventStateAction) {
@@ -293,7 +276,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventFullDto> getAllEventsByAdmin(
-            Set<Long> users, Set<EventState> states, Set<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size, EventSort sortBy) {
+            Set<Long> users, Set<EventState> states, Set<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size) {
         log.info("Выгрузка списка мероприятий администратором с параметрами: " +
                 "users = {}, sates = {}, categories = {}, rangeStart = {}, rangeEnd = {}, from = {}, size = {}.",
                 users, states, categories, rangeStart, rangeEnd, from, size);
@@ -301,8 +284,6 @@ public class EventServiceImpl implements EventService {
         BooleanExpression byStates;
         BooleanExpression byCategories;
         BooleanExpression byDate = QEvent.event.eventDate.between(rangeStart, rangeEnd);
-       // Sort sort;
-
         if (users.isEmpty()) {
             byUsers = QEvent.event.initiator.id.notIn(users);
         } else {
@@ -318,16 +299,59 @@ public class EventServiceImpl implements EventService {
         } else {
             byCategories = QEvent.event.category.id.in(categories);
         }
-       /* if (sortBy.equals(EventSort.EVENT_DATE)) {
-            sort.and(Sort.Direction.DESC); Sort(Sort.Direction.DESC);
-        } else {
-            sort = new Sort.Order(Sort.Direction.DESC, "views").nullsLast();
-        }*/
-        Integer page = from / size;
+        int page = from / size;
         PageRequest pageRequest = PageRequest.of(page, size);
         Iterable<Event> foundEvents = eventRepository.findAll(
                 byUsers.and(byStates).and(byCategories).and(byDate), pageRequest);
         return EventMapper.INSTANT.iterableToList(foundEvents);
+    }
+
+    @Override
+    public List<EventShortDto> getEventsByPublic(
+            String text, Set<Long> categories, Boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd,
+            Boolean onlyAvailable, EventSort sort, Integer from, Integer size) {
+        log.info("Выгрузка списка мероприятий. Публичный API с параметрами: " +
+                        "text = {}, categories = {}, paid = {}, rangeStart = {}, rangeEnd = {}, onlyAvailable = {}, " +
+                        "sort = {}, from = {}, size = {}.",
+                text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
+
+        BooleanExpression byPaid = QEvent.event.paid.eq(paid);
+        BooleanExpression byDate = QEvent.event.eventDate.between(rangeStart, rangeEnd);
+        BooleanExpression byCategories;
+        BooleanExpression byAnnotation;
+        BooleanExpression byDescription;
+        BooleanExpression byState = QEvent.event.state.eq(EventState.PUBLISHED);
+        int page = from / size;
+        String sorting;
+        if (sort.equals(EventSort.EVENT_DATE)) {
+            sorting = "eventDate";
+        } else {
+            sorting = "views";
+        }
+        Pageable pageable = PageRequest.of(page, size);
+        if (categories.isEmpty()) {
+            byCategories = QEvent.event.category.id.notIn(categories);
+        } else {
+            byCategories = QEvent.event.category.id.in(categories);
+        }
+        Page<Event> eventsPage;
+        if (text != null) {
+            byAnnotation = QEvent.event.annotation.likeIgnoreCase(text);
+            byDescription = QEvent.event.description.likeIgnoreCase(text);
+            eventsPage = eventRepository.findAll(
+                    byAnnotation.and(byDescription).and(byPaid).and(byDate).and(byCategories).and(byState), pageable);
+        } else {
+            eventsPage = eventRepository.findAll(
+                    byPaid.and(byDate).and(byCategories).and(byState), pageable);
+        }
+        List<Event> events = eventsPage.getContent();
+        if (onlyAvailable) {
+            events.removeIf(event -> event.getParticipants().size() == event.getParticipantLimit());
+        }
+//        List<EventShortDto> result = EventMapper.INSTANT.toEventShortDto(events);
+//        List<EventShortDto> sortedResult = result.stream()
+//                .sorted(Comparator.comparing(EventShortSortByDate, EventShortDto::getEventDate).collect(Collectors.toList());
+        return EventMapper.INSTANT.toEventShortDto(events);
     }
 
 }
