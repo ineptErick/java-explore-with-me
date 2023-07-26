@@ -5,6 +5,8 @@ import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.NewEventDto;
 import ru.practicum.event.dto.UpdateEventRequest;
+import ru.practicum.event.enums.EventSort;
+import ru.practicum.event.enums.EventState;
 import ru.practicum.event.enums.EventStateAction;
 import ru.practicum.event.model.Event;
 import ru.practicum.request.dto.EventRequestStatusUpdateRequest;
@@ -14,6 +16,7 @@ import ru.practicum.users.model.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public interface EventService {
 
@@ -45,4 +48,5 @@ public interface EventService {
 
     void isEventIsPresent(Long eventId);
 
+    List<EventFullDto> getAllEventsByAdmin(Set<Long> users, Set<EventState> states, Set<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size, EventSort sortBy);
 }

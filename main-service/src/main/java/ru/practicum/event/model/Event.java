@@ -29,17 +29,17 @@ public class Event {
     @Column(name = "event_id", nullable = false)
     private Long id;
 
-    @Column(name = "annotation", nullable = false)
+    @Column(name = "annotation", nullable = false, length = 2000)
     private String annotation;
 
-    @Column(name = "title", nullable = false)
+    @Column(name = "title", nullable = false, length = 120)
     private String title;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = false, length = 7000)
     private String description;
 
     @Builder.Default
-    @Column(name = "state", nullable = false)
+    @Column(name = "state", nullable = false, length = 15)
     @Enumerated(EnumType.STRING)
     private EventState state = EventState.PENDING;
 

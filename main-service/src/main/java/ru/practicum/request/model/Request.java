@@ -28,7 +28,7 @@ public class Request {
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")
+    @Column(name = "status", length = 15)
     private RequestStatus status = RequestStatus.PENDING;
 
     @ManyToOne

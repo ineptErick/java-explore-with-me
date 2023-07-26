@@ -1,5 +1,6 @@
 package ru.practicum.event.service;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -18,10 +19,12 @@ import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.NewEventDto;
 import ru.practicum.event.dto.UpdateEventRequest;
+import ru.practicum.event.enums.EventSort;
 import ru.practicum.event.enums.EventState;
 import ru.practicum.event.enums.EventStateAction;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.EventMapper;
+import ru.practicum.event.model.QEvent;
 import ru.practicum.event.repository.EventRepository;
 
 import ru.practicum.request.dto.EventRequestStatusUpdateRequest;
@@ -37,6 +40,7 @@ import ru.practicum.users.service.UsersService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 
 @Service
@@ -72,15 +76,26 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventFullDto updateEventByUser(Long userId, Long eventId, UpdateEventRequest updateEventByUser) {
-        log.info("Пользователь с ID = {} обновляет мероприятие с ID = {}.", userId, eventId);
-        User user = usersService.getUserById(userId);
-        categoryService.isCategoryPresent(updateEventByUser.getCategory());
+    public EventFullDto updateEvent(Long userId, Long eventId, UpdateEventRequest updateEvent, Boolean isAdmin, Boolean isOwner) {
+        if (updateEvent.getCategory() != null) {
+            categoryService.isCategoryPresent(updateEvent.getCategory());
+        }
         Event eventForUpdate = getEventById(eventId);
-        checkIfEventCanBeUpdated(updateEventByUser, eventForUpdate, user);
+        if (isOwner) {
+            log.info("Пользователь с ID = {} обновляет мероприятие с ID = {}.", userId, eventId);
+            User user = usersService.getUserById(userId);
+            checkIfEventCanBeUpdated(updateEvent, eventForUpdate, user);
+            log.debug("Пользователь с ID = {} обновил мероприятие с ID = {}.", userId, eventId);
+        } else {
+            log.info("Администратор обновляет мероприятие с ID = {}.", eventId);
+            if (updateEvent.getEventDate() != null) {
+                checkIfEvenDateCorrect(updateEvent.getEventDate());
+            }
+            log.debug("Администратор обновил мероприятие с ID = {}.", eventId);
+        }
         return EventMapper.INSTANT.toEventFullDto(
                 eventRepository.save(
-                        updateEvent(eventForUpdate, updateEventByUser)));
+                        updateEvent(eventForUpdate, updateEvent)));
     }
 
     @Override
@@ -114,6 +129,7 @@ public class EventServiceImpl implements EventService {
         }
     }
 
+    //TODO проверить работу метода
     @Override
     @Transactional
     public EventRequestStatusUpdateResult processWithEventsRequests(
@@ -183,8 +199,14 @@ public class EventServiceImpl implements EventService {
                 c -> updatedEvent.setCategory(categoryService.getCategoryModelById(c)));
         Optional.ofNullable(updateEventRequest.getDescription()).ifPresent(updatedEvent::setDescription);
         Optional.ofNullable(updateEventRequest.getEventDate()).ifPresent(updatedEvent::setEventDate);
-        Optional.ofNullable(updateEventRequest.getLocation().getLat()).ifPresent(updatedEvent::setLat);
-        Optional.ofNullable(updateEventRequest.getLocation().getLon()).ifPresent(updatedEvent::setLon);
+        if (updateEventRequest.getLocation() != null) {
+            if (updateEventRequest.getLocation().getLat() != null) {
+                updatedEvent.setLat(updateEventRequest.getLocation().getLat());
+            }
+            if (updateEventRequest.getLocation().getLon() != null) {
+                updatedEvent.setLon(updateEventRequest.getLocation().getLon());
+            }
+        }
         Optional.ofNullable(updateEventRequest.getPaid()).ifPresent(updatedEvent::setPaid);
         Optional.ofNullable(updateEventRequest.getParticipantLimit()).ifPresent(updatedEvent::setParticipantLimit);
         Optional.ofNullable(updateEventRequest.getRequestModeration()).ifPresent(updatedEvent::setRequestModeration);
@@ -210,7 +232,9 @@ public class EventServiceImpl implements EventService {
             log.error("Только инициатор или администратор могут менять мероприятие.");
             throw new BadRequestException("Только инициатор или администратор могут менять мероприятие.");
         }
-        checkIfEvenDateCorrect(updatedEven.getEventDate());
+        if (updatedEven.getEventDate() != null) {
+            checkIfEvenDateCorrect(updatedEven.getEventDate());
+        }
         if (oldEvent.getState().equals(EventState.PUBLISHED)) {
             log.error("Только мероприятия со статусом PENDING или CANCELED могут быть изменены.");
             throw new ConflictException("Только мероприятия со статусом PENDING или CANCELED могут быть изменены.");
@@ -265,6 +289,45 @@ public class EventServiceImpl implements EventService {
         eventRepository.findById(eventId).orElseThrow(
                 () -> new NotFoundException("Мероприятие с ID = " + eventId + " не найдено.")
         );
+    }
+
+    @Override
+    public List<EventFullDto> getAllEventsByAdmin(
+            Set<Long> users, Set<EventState> states, Set<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size, EventSort sortBy) {
+        log.info("Выгрузка списка мероприятий администратором с параметрами: " +
+                "users = {}, sates = {}, categories = {}, rangeStart = {}, rangeEnd = {}, from = {}, size = {}.",
+                users, states, categories, rangeStart, rangeEnd, from, size);
+        BooleanExpression byUsers;
+        BooleanExpression byStates;
+        BooleanExpression byCategories;
+        BooleanExpression byDate = QEvent.event.eventDate.between(rangeStart, rangeEnd);
+       // Sort sort;
+
+        if (users.isEmpty()) {
+            byUsers = QEvent.event.initiator.id.notIn(users);
+        } else {
+            byUsers = QEvent.event.initiator.id.in(users);
+        }
+        if (states.isEmpty()) {
+            byStates = QEvent.event.state.notIn(states);
+        } else {
+            byStates = QEvent.event.state.in(states);
+        }
+        if (categories.isEmpty()) {
+            byCategories = QEvent.event.category.id.notIn(categories);
+        } else {
+            byCategories = QEvent.event.category.id.in(categories);
+        }
+       /* if (sortBy.equals(EventSort.EVENT_DATE)) {
+            sort.and(Sort.Direction.DESC); Sort(Sort.Direction.DESC);
+        } else {
+            sort = new Sort.Order(Sort.Direction.DESC, "views").nullsLast();
+        }*/
+        Integer page = from / size;
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Iterable<Event> foundEvents = eventRepository.findAll(
+                byUsers.and(byStates).and(byCategories).and(byDate), pageRequest);
+        return EventMapper.INSTANT.iterableToList(foundEvents);
     }
 
 }

@@ -22,11 +22,11 @@ public class User {
     private Long id;
 
     @NotBlank
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, length = 255)
     private String name;
 
     @NotBlank
-    @Column(name = "email", nullable = false, unique = true)
+    @Column(name = "email", nullable = false, unique = true, length = 320)
     private String email;
 
 }
