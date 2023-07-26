@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ApiError.exception.BadRequestException;
 import ru.practicum.ApiError.exception.ConflictException;
 import ru.practicum.ApiError.exception.NotFoundException;
-//import ru.practicum.StatisticClientController;
+import ru.practicum.StatisticClient;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.model.CategoryMapper;
 import ru.practicum.category.service.CategoryService;
@@ -37,6 +37,7 @@ import ru.practicum.request.repository.RequestRepository;
 import ru.practicum.users.model.User;
 import ru.practicum.users.service.UsersService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -53,7 +54,7 @@ public class EventServiceImpl implements EventService {
 
     private final UsersService usersService;
 
-//    private final StatisticClientController statisticClientController;
+    private final StatisticClient statisticClient;
 
     private final RequestRepository requestRepository;
 
@@ -64,9 +65,10 @@ public class EventServiceImpl implements EventService {
         checkIfEvenDateCorrect(newEvent.getEventDate());
         User user = usersService.getUserById(userId);
         CategoryDto categoryDto = categoryService.getCategoryById(newEvent.getCategory());
-        Event event = eventRepository.save(EventMapper.INSTANT.toEvent(newEvent));
+        Event event = EventMapper.INSTANT.toEvent(newEvent);
         event.setInitiator(user);
         event.setCategory(CategoryMapper.INSTANT.categoryDtoToCategory(categoryDto));
+        eventRepository.save(event);
         log.debug("Пользователь с ID = {} создал мероприятие \"{}\". ID = {}.",
                 userId, newEvent.getTitle(), event.getId());
         return EventMapper.INSTANT.toEventFullDto(event);
@@ -320,7 +322,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventShortDto> getEventsByPublic(
             String text, Set<Long> categories, Boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd,
-            Boolean onlyAvailable, EventSort sort, Integer from, Integer size) {
+            Boolean onlyAvailable, EventSort sort, Integer from, Integer size, HttpServletRequest request) {
         log.info("Выгрузка списка мероприятий. Публичный API с параметрами: " +
                         "text = {}, categories = {}, paid = {}, rangeStart = {}, rangeEnd = {}, onlyAvailable = {}, " +
                         "sort = {}, from = {}, size = {}.",
@@ -359,16 +361,15 @@ public class EventServiceImpl implements EventService {
         if (onlyAvailable) {
             events.removeIf(event -> event.getParticipants().size() == event.getParticipantLimit());
         }
-//        List<EventShortDto> result = EventMapper.INSTANT.toEventShortDto(events);
-//        List<EventShortDto> sortedResult = result.stream()
-//                .sorted(Comparator.comparing(EventShortSortByDate, EventShortDto::getEventDate).collect(Collectors.toList());
+        statisticClient.createHit(request.getRequestURI(), request.getRemoteAddr());
         return EventMapper.INSTANT.toEventShortDto(events);
     }
 
     @Override
-    public EventFullDto getEventByIdPubic(Long eventId) {
+    public EventFullDto getEventByIdPubic(Long eventId, HttpServletRequest request) {
         Event event = eventRepository.findFirstByIdAndState(eventId, EventState.PUBLISHED);
         if (event != null) {
+            statisticClient.createHit(request.getRequestURI(), request.getRemoteAddr());
             return EventMapper.INSTANT.toEventFullDto(event);
         } else {
             throw new NotFoundException("Мероприятие с ID = " + eventId + " не найдено.");

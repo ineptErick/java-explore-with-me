@@ -14,26 +14,38 @@ import ru.practicum.request.dto.EventRequestStatusUpdateResult;
 import ru.practicum.request.dto.ParticipationRequestDto;
 import ru.practicum.users.model.User;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
 public interface EventService {
 
+    //Юсер
     EventFullDto createEvent(Long userId, NewEventDto newEvent);
 
+    //Админ
+    //Юсер
     EventFullDto updateEvent(Long userId, Long eventId, UpdateEventRequest updateEventByUser, Boolean isAdmin, Boolean isOwner);
 
+    //Админ
+    //Юсер
     Event updateEvent(Event updatedEvent, UpdateEventRequest updateEventRequest, Boolean isAdmin);
 
+    //Админ
+    //Юсер
     void setEventStateByEventStateAction(Event event, EventStateAction eventStateAction);
 
+    //Юсер
     EventFullDto getFullEventById(Long userId, Long eventId);
 
+    //Юсер
     List<EventShortDto> getAllUsersEvents(Integer from, Integer size, Long userId);
 
+    //Юсер
     List<ParticipationRequestDto> getRequestsOnEvent(Long userId, Long eventId);
 
+    //Юсер
     EventRequestStatusUpdateResult processWithEventsRequests(Long userId, Long eventId, EventRequestStatusUpdateRequest requests);
 
 
@@ -48,11 +60,16 @@ public interface EventService {
 
     void isEventIsPresent(Long eventId);
 
-    List<EventFullDto> getAllEventsByAdmin(Set<Long> users, Set<EventState> states, Set<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size);
+    //Админ
+    List<EventFullDto> getAllEventsByAdmin(Set<Long> users, Set<EventState> states, Set<Long> categories,
+                                           LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size);
 
-    List<EventShortDto> getEventsByPublic(String text, Set<Long> categories, Boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, EventSort sort, Integer from, Integer size);
+    //Паблик
+    List<EventShortDto> getEventsByPublic(String text, Set<Long> categories, Boolean paid, LocalDateTime rangeStart,
+                                          LocalDateTime rangeEnd, Boolean onlyAvailable, EventSort sort, Integer from, Integer size, HttpServletRequest request);
 
-    EventFullDto getEventByIdPubic(Long eventId);
+    //Паблик
+    EventFullDto getEventByIdPubic(Long eventId, HttpServletRequest request);
 
     List<Event> getEventByIds(List<Long> events);
 }

@@ -10,8 +10,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
+import ru.practicum.dto.StatisticPostDto;
 
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -22,6 +25,8 @@ import java.util.Set;
 public class StatisticClient {
 
     private String serverUrl = "http://localhost:9090";
+
+    private final String appName = "ewm-service";
 
     private final RestTemplate rest =  new RestTemplateBuilder()
             .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
@@ -77,4 +82,12 @@ public class StatisticClient {
         return headers;
     }
 
+    public void createHit(String requestURI, String remoteAddr) {
+        String path = "/hit";
+        StatisticPostDto statisticPostDto = new StatisticPostDto(
+                appName, requestURI, remoteAddr,
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        HttpEntity<Object> requestEntity = new HttpEntity<>(statisticPostDto, defaultHeaders());
+        rest.exchange(path, HttpMethod.POST, requestEntity, Object.class);
+    }
 }

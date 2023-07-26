@@ -9,6 +9,7 @@ import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.enums.EventSort;
 import ru.practicum.event.service.EventService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
@@ -37,19 +38,19 @@ public class EventPublicController {
             @RequestParam(defaultValue = "false") Boolean onlyAvailable,
             @RequestParam(defaultValue = "EVENT_DATE") EventSort sort,
             @PositiveOrZero @RequestParam(value = "from", defaultValue = "0") Integer from,
-            @Positive @RequestParam(value = "size", defaultValue = "10") Integer size) {
+            @Positive @RequestParam(value = "size", defaultValue = "10") Integer size,
+            HttpServletRequest request) {
         categories = categories == null ? new HashSet<>() : categories;
         rangeStart = rangeStart == null ? LocalDateTime.now() : rangeStart;
         rangeEnd = rangeEnd == null ? rangeStart.plusYears(100) : rangeEnd;
         return eventService.getEventsByPublic(
-                text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
+                text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size, request);
     }
 
-    //todo добавить с стат
     @GetMapping("/{eventId}")
     @ResponseStatus(HttpStatus.OK)
     public EventFullDto getEventByIdPubic(
-            @Positive @PathVariable Long eventId) {
-        return eventService.getEventByIdPubic(eventId);
+            @Positive @PathVariable Long eventId, HttpServletRequest request) {
+        return eventService.getEventByIdPubic(eventId, request);
     }
 }

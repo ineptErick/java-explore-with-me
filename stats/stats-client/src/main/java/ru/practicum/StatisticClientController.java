@@ -2,6 +2,7 @@ package ru.practicum;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,7 @@ public class StatisticClientController {
 
 
     @PostMapping("/hit")
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Object> addHit(
             @RequestBody StatisticPostDto statisticPostDto) {
         validation.statisticDtoIsValid(statisticPostDto);
@@ -34,6 +36,7 @@ public class StatisticClientController {
     }
 
     @GetMapping("/stats")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> getStatistic(
             @RequestParam Map<String, String> params,
             @RequestParam(value = "uris", required = false) Set<String> uris) {
