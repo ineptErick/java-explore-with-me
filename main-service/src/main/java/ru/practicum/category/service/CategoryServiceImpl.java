@@ -85,6 +85,13 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public Category getCategoryModelById(Long catId) {
+        log.info("Получение категории по ID = {}.", catId);
+        return categoryRepository.findById(catId).orElseThrow(
+                () -> new NotFoundException("Категория с ID = " + catId + " не найдена."));
+    }
+
+    @Override
     public void isCategoryNameIsBusy(String name) {
         if (categoryRepository.findFirstByName(name) != null) {
             log.error("Категория \"{}\" уже существует.",name);

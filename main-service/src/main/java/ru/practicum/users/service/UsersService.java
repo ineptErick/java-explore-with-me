@@ -17,4 +17,6 @@ public interface UsersService {
     User getUserById(Long userId);
 
     boolean isUserPresentByEmail(String email);
+
+    void isUserPresent(Long userId);
 }

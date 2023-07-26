@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import org.postgresql.util.PSQLException;
+import ru.practicum.ApiError.exception.ConflictException;
 import ru.practicum.ApiError.exception.NotFoundException;
 import ru.practicum.ApiError.exception.ValidationException;
 
@@ -68,5 +69,14 @@ public class ErrorHandler {
                 LocalDateTime.now());
     }
 
+    @ExceptionHandler(ConflictException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public ErrorResponse onConflictException(ConflictException e) {
+        return new ErrorResponse(HttpStatus.FORBIDDEN,
+                "Событие не удовлетворяет правилам редактирования",
+                e.getMessage(),
+                LocalDateTime.now());
+    }
 
 }
