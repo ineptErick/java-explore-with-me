@@ -1,18 +1,19 @@
 package ru.practicum.compilation.dto;
 
+import lombok.*;
 import ru.practicum.event.dto.EventShortDto;
 
 import java.util.List;
 
-//Подборка событий
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CompilationDto {
 
-    //Список событий входящих в подборку
-    private List<EventShortDto> events;
-    //Идентификатор
     private Long id;
-    //Закреплена ли подборка на главной странице сайта
+    private List<EventShortDto> events;
     private Boolean pinned;
-    //Заголовок подборки
     private String title;
 }

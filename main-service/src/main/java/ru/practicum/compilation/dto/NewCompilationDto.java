@@ -1,14 +1,23 @@
 package ru.practicum.compilation.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
-//Подборка событий
+
+@Data
+@Builder
+@AllArgsConstructor
 public class NewCompilationDto {
-    //Список идентификаторов событий входящих в подборку
-    private List<Long> events;
-    //Закреплена ли подборка на главной странице сайта
-    //default: false
-    private Boolean pinned;
-    //Заголовок подборки
+
+    @NotBlank
     private String title;
+
+    private Boolean pinned;
+
+    private List<Long> events;
+
 }
