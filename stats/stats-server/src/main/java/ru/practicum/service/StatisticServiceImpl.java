@@ -3,9 +3,11 @@ package ru.practicum.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.dto.StatisticGetProjection;
-import ru.practicum.dto.StatisticPostDto;
-import ru.practicum.model.StatisticMapper;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.dto.EndpointHit;
+import ru.practicum.dto.ViewStats;
+import ru.practicum.model.Hit;
+import ru.practicum.model.HitMapper;
 import ru.practicum.repository.StatisticRepository;
 
 import java.time.LocalDateTime;
@@ -20,7 +22,7 @@ public class StatisticServiceImpl implements StatisticService {
     private final StatisticRepository statisticRepository;
 
     @Override
-    public List<StatisticGetProjection> getStatistic(String path, Map<String, String> params, Set<String> uris) {
+    public List<ViewStats> getStatistic(String path, Map<String, String> params, Set<String> uris) {
         boolean isUnique = params.containsKey("unique") ? Boolean.parseBoolean(params.get("unique")) : false;
         uris = uris == null ? new HashSet<>() : uris;
         if (uris.size() > 0 && !isUnique) {
@@ -39,9 +41,11 @@ public class StatisticServiceImpl implements StatisticService {
     }
 
     @Override
-    public StatisticPostDto addStatistic(StatisticPostDto statisticPostDto) {
-        statisticRepository.save(StatisticMapper.INSTANT.toStatistic(statisticPostDto));
-        return statisticPostDto;
+    @Transactional
+    public EndpointHit save(EndpointHit endpointHit) {
+        Hit save = HitMapper.INSTANT.toHit(endpointHit);
+        statisticRepository.save(save);
+        return HitMapper.INSTANT.toEndpointHit(save);
     }
 
     private LocalDateTime stringToLocalDate(String date) {

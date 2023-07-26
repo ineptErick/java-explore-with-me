@@ -1,14 +1,15 @@
 package ru.practicum.service;
 
-import ru.practicum.dto.StatisticGetProjection;
-import ru.practicum.dto.StatisticPostDto;
+import ru.practicum.dto.EndpointHit;
+import ru.practicum.dto.ViewStats;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public interface StatisticService {
-    List<StatisticGetProjection> getStatistic(String path, Map<String, String> params, Set<String> uris);
 
-    StatisticPostDto addStatistic(StatisticPostDto statisticPostDto);
+    EndpointHit save(EndpointHit endpointHit);
+
+    List<ViewStats> getStatistic(String path, Map<String, String> params, Set<String> uris);
 }

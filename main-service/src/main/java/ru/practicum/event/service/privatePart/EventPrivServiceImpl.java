@@ -11,6 +11,7 @@ import ru.practicum.ApiError.exception.ConflictException;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.model.CategoryMapper;
 import ru.practicum.category.utils.CategoryUtils;
+import ru.practicum.client.Client;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.NewEventDto;
@@ -50,6 +51,8 @@ public class EventPrivServiceImpl implements EventPrivService {
 
     private final EventUtils eventUtils;
 
+    private final Client client;
+
 
 
     @Override
@@ -88,7 +91,10 @@ public class EventPrivServiceImpl implements EventPrivService {
     public EventFullDto getFullEventById(Long userId, Long eventId) {
         log.info("Пользователь с ID = {} запросил информации о мероприятии с ID = {}.", userId, eventId);
         usersService.isUserPresent(userId);
-        return EventMapper.INSTANT.toEventFullDto(eventUtils.getEventById(eventId));
+        EventFullDto fullDto = EventMapper.INSTANT.toEventFullDto(eventUtils.getEventById(eventId));
+        //client.setViewsToEventFullDto(fullDto);
+        return fullDto;/*client.setViewsToEventFullDto(
+                EventMapper.INSTANT.toEventFullDto(eventUtils.getEventById(eventId)));*/
     }
 
     @Override

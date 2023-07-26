@@ -2,9 +2,10 @@ package ru.practicum.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.dto.StatisticGetProjection;
-import ru.practicum.dto.StatisticPostDto;
+import ru.practicum.dto.EndpointHit;
+import ru.practicum.dto.ViewStats;
 import ru.practicum.exception.BadRequest;
 import ru.practicum.service.StatisticService;
 import ru.practicum.validation.StatisticValidation;
@@ -23,15 +24,16 @@ public class StatisticController {
     private final StatisticValidation validation;
 
     @PostMapping("/hit")
-    public StatisticPostDto addHit(
-            @RequestBody StatisticPostDto statisticPostDto) {
-        validation.statisticDtoIsValid(statisticPostDto);
-        log.info("Добавлен просмотр в статистику для URI: {}", statisticPostDto.getUri());
-        return statisticService.addStatistic(statisticPostDto);
+    @ResponseStatus(HttpStatus.CREATED)
+    public EndpointHit addHit(
+            @RequestBody EndpointHit endpointHit) {
+        log.info("Добавлен просмотр в статистику для URI: {}", endpointHit.getUri());
+        return statisticService.save(endpointHit);
     }
 
     @GetMapping("/stats")
-    public List<StatisticGetProjection> getStatistic(
+    @ResponseStatus(HttpStatus.OK)
+    public List<ViewStats> getStatistic(
             @RequestParam Map<String, String> params,
             @RequestParam(value = "uris", required = false) Set<String> uris) {
         if (!params.containsKey("start") || !params.containsKey("end")) {

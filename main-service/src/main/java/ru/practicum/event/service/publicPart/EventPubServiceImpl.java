@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ApiError.exception.NotFoundException;
-import ru.practicum.StatisticClient;
+import ru.practicum.StatsClient;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.enums.EventSort;
@@ -33,9 +33,8 @@ public class EventPubServiceImpl implements EventPubService {
 
     private final EventRepository eventRepository;
 
-    private final StatisticClient statisticClient;
+    private final StatsClient statisticClient;
 
-    //TODO проверить (сортировка) + hit в стат
     @Override
     public List<EventShortDto> getEventsByPublic(
             String text, Set<Long> categories, Boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd,
@@ -78,7 +77,7 @@ public class EventPubServiceImpl implements EventPubService {
         if (onlyAvailable) {
             events.removeIf(event -> event.getParticipants().size() == event.getParticipantLimit());
         }
-//        statisticClient.createHit(request.getRequestURI(), request.getRemoteAddr());
+        statisticClient.createHit(request.getRequestURI(), request.getRemoteAddr());
         return EventMapper.INSTANT.toEventShortDto(events);
     }
 
@@ -86,7 +85,7 @@ public class EventPubServiceImpl implements EventPubService {
     public EventFullDto getEventByIdPubic(Long eventId, HttpServletRequest request) {
         Event event = eventRepository.findFirstByIdAndState(eventId, EventState.PUBLISHED);
         if (event != null) {
-           // statisticClient.createHit(request.getRequestURI(), request.getRemoteAddr());
+            statisticClient.createHit(request.getRequestURI(), request.getRemoteAddr());
             return EventMapper.INSTANT.toEventFullDto(event);
         } else {
             throw new NotFoundException("Мероприятие с ID = " + eventId + " не найдено.");
