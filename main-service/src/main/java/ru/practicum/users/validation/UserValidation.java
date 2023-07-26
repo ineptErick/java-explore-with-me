@@ -5,12 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import ru.practicum.ApiError.BadRequestException;
-import ru.practicum.ApiError.ErrorResponse;
+import ru.practicum.ApiError.exception.BadRequestException;
 import ru.practicum.users.repository.UsersRepository;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Component("userValidation")
 @Slf4j

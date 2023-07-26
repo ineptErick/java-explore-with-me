@@ -3,12 +3,15 @@ package ru.practicum.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.dto.StatisticGetDto;
+import ru.practicum.dto.StatisticGetProjection;
 import ru.practicum.dto.StatisticPostDto;
+import ru.practicum.exception.BadRequest;
 import ru.practicum.service.StatisticService;
 import ru.practicum.validation.StatisticValidation;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,15 +31,17 @@ public class StatisticController {
     }
 
     @GetMapping("/stats")
-    public List<StatisticGetDto> getStatistic(
-            @RequestParam(value = "start", required = true) String start,
-            @RequestParam(value = "end", required = true) String end,
-            @RequestParam(value = "uris", required = false) String[] uris,
-            @RequestParam(value = "unique", defaultValue = "false") Boolean isUnique) {
-        validation.dateIsValid(start);
-        validation.dateIsValid(end);
-        log.info("Запрос статистики с параметрами: \n start={} \n end={} \n isUnique={} \n uris={}", start, end, isUnique, uris);
-        return statisticService.getStatistic(start, end, uris, isUnique);
+    public List<StatisticGetProjection> getStatistic(
+            @RequestParam Map<String, String> params,
+            @RequestParam(value = "uris", required = false) Set<String> uris) {
+        if (!params.containsKey("start") || !params.containsKey("end")) {
+            log.info("Не заданы обязательные параметры: start и/или end.");
+            throw new BadRequest("Не заданы обязательные параметры: start и/или end.");
+        }
+        validation.dateIsValid(params.get("start"));
+        validation.dateIsValid(params.get("end"));
+        log.info("Запрос статистики с параметрами: \n start={} \n end={} \n isUnique={} \n uris={}",
+                params.get("start"), params.get("end"), params.get("unique"), params.get("uris"));
+        return statisticService.getStatistic("/stats", params, uris);
     }
-
 }

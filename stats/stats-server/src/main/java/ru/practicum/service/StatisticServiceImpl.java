@@ -3,16 +3,14 @@ package ru.practicum.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.dto.StatisticGetDto;
+import ru.practicum.dto.StatisticGetProjection;
 import ru.practicum.dto.StatisticPostDto;
 import ru.practicum.model.StatisticMapper;
 import ru.practicum.repository.StatisticRepository;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -22,29 +20,27 @@ public class StatisticServiceImpl implements StatisticService {
     private final StatisticRepository statisticRepository;
 
     @Override
-    public List<StatisticGetDto> getStatistic(String start, String end, String[] uris, Boolean isUnique) {
-        List<StatisticGetDto> result = new ArrayList<>();
-        if (uris == null && !isUnique) {
-            result = statisticRepository.getUrisViews(stringToLocalDate(start), stringToLocalDate(end));
-        } else if (uris == null && isUnique) {
-            result = statisticRepository.getUrisViewsUnique(stringToLocalDate(start), stringToLocalDate(end));
-        } else if (uris != null && !isUnique) {
-            for (String uri: uris) {
-                result.add(statisticRepository.getUriViews(uri, stringToLocalDate(start), stringToLocalDate(end)));
-            }
-            result.sort(Comparator.comparing(StatisticGetDto::getHits).reversed());
+    public List<StatisticGetProjection> getStatistic(String path, Map<String, String> params, Set<String> uris) {
+        boolean isUnique = params.containsKey("unique") ? Boolean.parseBoolean(params.get("unique")) : false;
+        uris = uris == null ? new HashSet<>() : uris;
+        if (uris.size() > 0 && !isUnique) {
+            return statisticRepository.getUrisViewsFromSet(uris, stringToLocalDate(params.get("start")),
+                    stringToLocalDate(params.get("end")));
+        } else if (uris.size() > 0 && isUnique) {
+            return statisticRepository.getUrisViewsFromSetUnique(uris, stringToLocalDate(params.get("start")),
+                    stringToLocalDate(params.get("end")));
+        } else if (isUnique) {
+            return statisticRepository.getUrisViewsUnique(stringToLocalDate(params.get("start")),
+                    stringToLocalDate(params.get("end")));
         } else {
-            for (String uri: uris) {
-                result.add(statisticRepository.getUriViewsUnique(uri, stringToLocalDate(start), stringToLocalDate(end)));
-            }
-            result.sort(Comparator.comparing(StatisticGetDto::getHits).reversed());
+            return statisticRepository.getUrisViews(stringToLocalDate(params.get("start")),
+                    stringToLocalDate(params.get("end")));
         }
-       return result;
     }
 
     @Override
     public StatisticPostDto addStatistic(StatisticPostDto statisticPostDto) {
-        statisticRepository.save(StatisticMapper.toStatistic(statisticPostDto));
+        statisticRepository.save(StatisticMapper.INSTANT.toStatistic(statisticPostDto));
         return statisticPostDto;
     }
 

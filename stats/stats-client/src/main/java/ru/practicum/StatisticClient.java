@@ -8,8 +8,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 
 @Service
@@ -23,23 +29,24 @@ public class StatisticClient {
             .build();
 
     protected  <T> ResponseEntity<Object> post(String path, T body) {
-        return makeAndSendRequest(HttpMethod.POST, serverUrl + path, body);
+        URI uri = UriComponentsBuilder.fromUriString(serverUrl + path).build().toUri();
+        return makeAndSendRequest(HttpMethod.POST, uri, body);
     }
 
-    protected ResponseEntity<Object> get(String path, String start, String end, String[] uris, Boolean isUnique) {
-        StringBuilder fullPath = new StringBuilder().append(serverUrl).append(path);
-        fullPath.append("?start=").append(start).append("&end=").append(end);
-        if (uris != null) {
-            for (String uri: uris) {
-                fullPath.append("&uris=").append(uri);
-            }
-        }
-        System.out.println(rest.getUriTemplateHandler());
-        fullPath.append("&isUnique=").append(isUnique);
-        return makeAndSendRequest(HttpMethod.GET, fullPath.toString(), null);
+    protected ResponseEntity<Object> get(String path, Map<String, String> params, Set<String> uris) {
+        UriComponents uriComponents = UriComponentsBuilder
+                .fromUriString(serverUrl + path)
+                .queryParam("start", "{start}")
+                .queryParam("end", "{end}")
+                .queryParamIfPresent("unique", Optional.ofNullable(params.get("unique")))
+                .queryParamIfPresent("uris", Optional.ofNullable(uris))
+                .encode()
+                .build();
+        URI uri = uriComponents.expand(params).toUri();
+        return makeAndSendRequest(HttpMethod.GET, uri, null);
     }
 
-    private <T> ResponseEntity<Object> makeAndSendRequest(HttpMethod method, String path,
+    private <T> ResponseEntity<Object> makeAndSendRequest(HttpMethod method, URI path,
                                                            @Nullable T body) {
         HttpEntity<T> requestEntity = new HttpEntity<>(body, defaultHeaders());
 
@@ -56,13 +63,10 @@ public class StatisticClient {
         if (response.getStatusCode().is2xxSuccessful()) {
             return response;
         }
-
         ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.status(response.getStatusCode());
-
         if (response.hasBody()) {
             return responseBuilder.body(response.getBody());
         }
-
         return responseBuilder.build();
     }
 

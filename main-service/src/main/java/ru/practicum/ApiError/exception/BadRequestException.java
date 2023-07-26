@@ -1,4 +1,4 @@
-package ru.practicum.ApiError;
+package ru.practicum.ApiError.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

@@ -6,8 +6,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.StatisticPostDto;
+import ru.practicum.exception.BadRequest;
 import ru.practicum.validation.StatisticValidation;
 
+import java.util.Map;
+import java.util.Set;
 
 
 @RequiredArgsConstructor
@@ -32,14 +35,17 @@ public class StatisticClientController {
 
     @GetMapping("/stats")
     public ResponseEntity<Object> getStatistic(
-            @RequestParam(value = "start", required = true) String start,
-            @RequestParam(value = "end", required = true) String end,
-            @RequestParam(value = "uris", required = false) String[] uris,
-            @RequestParam(value = "unique", defaultValue = "false") Boolean isUnique) {
-        validation.dateIsValid(start);
-        validation.dateIsValid(end);
-        log.info("Запрос статистики с параметрами: \n start={} \n end={} \n isUnique={} \n uris={}", start, end, isUnique, uris);
-        return statisticClient.get("/stats", start, end, uris, isUnique);
+            @RequestParam Map<String, String> params,
+            @RequestParam(value = "uris", required = false) Set<String> uris) {
+        if (!params.containsKey("start") || !params.containsKey("end")) {
+            log.info("Не заданы обязательные параметры: start и/или end.");
+            throw new BadRequest("Не заданы обязательные параметры: start и/или end.");
+        }
+        validation.dateIsValid(params.get("start"));
+        validation.dateIsValid(params.get("end"));
+        log.info("Запрос статистики с параметрами: \n start={} \n end={} \n isUnique={} \n uris={}",
+                params.get("start"), params.get("end"), params.get("unique"), params.get("uris"));
+        return statisticClient.get("/stats", params, uris);
     }
 
 }

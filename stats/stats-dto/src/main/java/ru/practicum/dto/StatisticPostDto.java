@@ -5,19 +5,19 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @Builder
 public class StatisticPostDto {
-    @NotNull
+    @NotBlank
     String app;
-    @NotNull
+    @NotBlank
     String uri;
-    @NotNull
+    @NotBlank
     String ip;
-    @NotNull
+    @NotBlank
     String timestamp;
 }
