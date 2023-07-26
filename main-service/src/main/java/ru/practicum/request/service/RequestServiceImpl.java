@@ -9,7 +9,7 @@ import ru.practicum.ApiError.exception.ConflictException;
 import ru.practicum.ApiError.exception.NotFoundException;
 import ru.practicum.event.enums.EventState;
 import ru.practicum.event.model.Event;
-import ru.practicum.event.service.EventService;
+import ru.practicum.event.utils.EventUtils;
 import ru.practicum.request.dto.ParticipationRequestDto;
 import ru.practicum.request.enums.RequestStatus;
 import ru.practicum.request.model.Request;
@@ -32,14 +32,15 @@ public class RequestServiceImpl implements RequestService {
 
     private final UsersService usersService;
 
-    private final EventService eventService;
+
+    private final EventUtils eventUtils;
 
 
     @Override
     @Transactional
     public ParticipationRequestDto createRequest(Long userId, Long eventId) {
         log.info("Создание запроса на участие в мероприятии с ID = {} от пользователя с ID = {}.", eventId, userId);
-        Event event = eventService.getEventById(eventId);
+        Event event = eventUtils.getEventById(eventId);
         User user = usersService.getUserById(userId);
         Request participantsRequests = requestRepository.findByUserIdAndEventId(userId, eventId);
         if (participantsRequests != null/*event.getParticipants().contains(user)*/) {

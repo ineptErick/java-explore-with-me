@@ -6,7 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
-import ru.practicum.category.service.CategoryService;
+import ru.practicum.category.service.adminPart.CategoryAdminService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -17,13 +17,13 @@ import javax.validation.constraints.Positive;
 @Validated
 public class CategoryAdminController {
 
-    private final CategoryService categoryService;
+    private final CategoryAdminService categoryAdminService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CategoryDto createCategory(
             @Valid @RequestBody NewCategoryDto newCategory) {
-        return categoryService.createCategory(newCategory);
+        return categoryAdminService.createCategory(newCategory);
     }
 
     @PatchMapping("/{catId}")
@@ -31,13 +31,13 @@ public class CategoryAdminController {
     public CategoryDto patchCategoryById(
             @Valid @RequestBody NewCategoryDto updatedCategory,
             @Positive @PathVariable Long catId) {
-        return categoryService.patchCategoryById(catId, updatedCategory);
+        return categoryAdminService.patchCategoryById(catId, updatedCategory);
     }
 
     @DeleteMapping("/{catId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCategory(
             @Positive @PathVariable Long catId) {
-        categoryService.deleteCategory(catId);
+        categoryAdminService.deleteCategory(catId);
     }
 }

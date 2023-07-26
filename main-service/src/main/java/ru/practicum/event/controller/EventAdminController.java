@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.UpdateEventRequest;
 import ru.practicum.event.enums.EventState;
-import ru.practicum.event.service.EventService;
+import ru.practicum.event.service.adminPart.EventAdminService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -23,7 +23,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class EventAdminController {
 
-    private final EventService eventService;
+    private final EventAdminService eventService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -51,6 +51,6 @@ public class EventAdminController {
     public EventFullDto updateEventByAdmin(
             @Positive @PathVariable Long eventId,
             @Valid @RequestBody UpdateEventRequest updatedEventByAdmin) {
-        return eventService.updateEvent(null, eventId, updatedEventByAdmin, true, false);
+        return eventService.updateEvent(eventId, updatedEventByAdmin);
     }
 }

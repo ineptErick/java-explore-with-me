@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.enums.EventSort;
-import ru.practicum.event.service.EventService;
+import ru.practicum.event.service.publicPart.EventPubService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Positive;
@@ -23,7 +23,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class EventPublicController {
 
-    private final EventService eventService;
+    private final EventPubService eventService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)

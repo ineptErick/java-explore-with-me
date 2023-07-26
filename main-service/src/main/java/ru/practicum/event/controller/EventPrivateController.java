@@ -8,7 +8,7 @@ import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.NewEventDto;
 import ru.practicum.event.dto.UpdateEventRequest;
-import ru.practicum.event.service.EventService;
+import ru.practicum.event.service.privatePart.EventPrivService;
 import ru.practicum.request.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.request.dto.EventRequestStatusUpdateResult;
 import ru.practicum.request.dto.ParticipationRequestDto;
@@ -24,7 +24,7 @@ import java.util.List;
 @Validated
 public class EventPrivateController {
 
-    private final EventService eventService;
+    private final EventPrivService eventService;
 
 
     @PostMapping
@@ -41,7 +41,7 @@ public class EventPrivateController {
             @Positive @PathVariable Long userId,
             @Positive @PathVariable Long eventId,
             @Valid @RequestBody UpdateEventRequest updatedEventByUser) {
-        return eventService.updateEvent(userId, eventId, updatedEventByUser, false, true);
+        return eventService.updateEvent(userId, eventId, updatedEventByUser);
     }
 
     @GetMapping("/{eventId}")
