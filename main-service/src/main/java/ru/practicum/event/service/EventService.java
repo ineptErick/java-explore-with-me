@@ -22,7 +22,9 @@ public interface EventService {
     EventFullDto updateEventByUser(Long userId, Long eventId, UpdateEventRequest updateEventByUser);
 
     Event updateEvent(Event updatedEvent, UpdateEventRequest updateEventRequest);
+
     void setEventStateByEventStateAction(Event event, EventStateAction eventStateAction);
+
     EventFullDto getFullEventById(Long userId, Long eventId);
 
     List<EventShortDto> getAllUsersEvents(Integer from, Integer size, Long userId);
@@ -36,7 +38,9 @@ public interface EventService {
 
 
     Event getEventById(Long eventId);
+
     void checkIfEvenDateCorrect(LocalDateTime evenDate);
+
     void checkIfEventCanBeUpdated(UpdateEventRequest updatedEven, Event oldEvent, User user);
 
     void isEventIsPresent(Long eventId);

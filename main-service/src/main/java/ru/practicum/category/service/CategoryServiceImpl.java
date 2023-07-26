@@ -96,7 +96,7 @@ public class CategoryServiceImpl implements CategoryService {
         if (categoryRepository.findFirstByName(name) != null) {
             log.error("Категория \"{}\" уже существует.",name);
             throw new BadRequestException("Категория уже существует.");
-        };
+        }
     }
 
     @Override
@@ -104,7 +104,7 @@ public class CategoryServiceImpl implements CategoryService {
         if (categoryRepository.getCategoryById(catId) == null) {
             log.error("Категория c ID = {} не существует.",catId);
             throw new BadRequestException("Категория c ID = " + catId + " не существует.");
-        };
+        }
     }
 
     @Override
@@ -112,6 +112,6 @@ public class CategoryServiceImpl implements CategoryService {
         if (eventRepository.findFirstByCategory(catId) != null) {
             log.error("Категория c ID = {} используется и не может быть удалена.",catId);
             throw new BadRequestException("Категория c ID = " + catId + " используется и не может быть удалена.");
-        };
+        }
     }
 }

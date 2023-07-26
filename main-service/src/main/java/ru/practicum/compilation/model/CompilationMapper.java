@@ -11,7 +11,7 @@ import java.util.Optional;
 public enum CompilationMapper {
     INSTANT;
 
-    public Compilation toCompilation (NewCompilationDto compilationDto, List<Event> events) {
+    public Compilation toCompilation(NewCompilationDto compilationDto, List<Event> events) {
         return Compilation.builder()
                 .pinned(Optional.ofNullable(compilationDto.getPinned()).orElse(false))
                 .title(compilationDto.getTitle())

@@ -10,7 +10,7 @@ import ru.practicum.users.model.User;
 import java.util.Set;
 
 @Repository(value = "dbUsersRepository")
-public interface UsersRepository extends JpaRepository <User, Long> {
+public interface UsersRepository extends JpaRepository<User, Long> {
 
     //Выгрузка всех конкретных пользователей по ID
     @Query(value = "SELECT * " +

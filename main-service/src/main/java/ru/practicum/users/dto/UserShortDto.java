@@ -8,7 +8,6 @@ import lombok.Data;
 public class UserShortDto {
 
     private Long id;
-    
-    private String name;
 
+    private String name;
 }

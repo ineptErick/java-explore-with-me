@@ -6,15 +6,13 @@ import ru.practicum.request.enums.RequestStatus;
 import ru.practicum.request.model.Request;
 
 import java.util.List;
-import java.util.Optional;
-
 
 @Repository(value = "dbRequestRepository")
 public interface RequestRepository extends JpaRepository<Request, Long> {
 
-    List<Request> findAllByRequesterId (Long userId);
+    List<Request> findAllByRequesterId(Long userId);
 
-    List<Request> findAllByEventId (Long eventId);
+    List<Request> findAllByEventId(Long eventId);
 
     List<Request> getByEventIdAndStatus(Long id, RequestStatus pending);
 
