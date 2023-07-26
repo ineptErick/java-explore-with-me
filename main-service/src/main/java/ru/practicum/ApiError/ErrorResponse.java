@@ -12,8 +12,10 @@ public class ErrorResponse {
 
     private final HttpStatus status;
 
-    private final String message;
     private final String reason;
+
+    private final String message;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private final String timestamp;
 
