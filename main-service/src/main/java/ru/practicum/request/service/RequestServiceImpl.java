@@ -41,7 +41,8 @@ public class RequestServiceImpl implements RequestService {
         log.info("Создание запроса на участие в мероприятии с ID = {} от пользователя с ID = {}.", eventId, userId);
         Event event = eventService.getEventById(eventId);
         User user = usersService.getUserById(userId);
-        if (event.getParticipants().contains(user)) {
+        Request participantsRequests = requestRepository.findByUserIdAndEventId(userId, eventId);
+        if (participantsRequests != null/*event.getParticipants().contains(user)*/) {
             log.error("Запрос на участие от пользователя с ID = {} уже существует.", userId);
             throw new ConflictException("Вы уже отправляли запрос на участие.");
         }

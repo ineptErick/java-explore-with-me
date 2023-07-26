@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
+import ru.practicum.event.enums.EventState;
 import ru.practicum.event.model.Event;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, QuerydslPre
             "WHERE e.initiator_id = ?1 ", nativeQuery = true)
     Page<Event> getAllEventsByUserId(Long userId, PageRequest pageRequest);
 
-    Event findFirstByIdAndState(Long evenId, String state);
+    Event findFirstByIdAndState(Long evenId, EventState state);
 
     List<Event> getByIdIn(List<Long> events);
 }

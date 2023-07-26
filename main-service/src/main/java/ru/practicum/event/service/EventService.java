@@ -24,7 +24,7 @@ public interface EventService {
 
     EventFullDto updateEvent(Long userId, Long eventId, UpdateEventRequest updateEventByUser, Boolean isAdmin, Boolean isOwner);
 
-    Event updateEvent(Event updatedEvent, UpdateEventRequest updateEventRequest);
+    Event updateEvent(Event updatedEvent, UpdateEventRequest updateEventRequest, Boolean isAdmin);
 
     void setEventStateByEventStateAction(Event event, EventStateAction eventStateAction);
 

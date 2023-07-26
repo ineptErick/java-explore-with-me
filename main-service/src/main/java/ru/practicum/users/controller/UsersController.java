@@ -35,9 +35,9 @@ public class UsersController {
     public List<UserDto> getAllUsers(
             @PositiveOrZero @RequestParam(value = "from", defaultValue = "0") Integer from,
             @Positive @RequestParam(value = "size", defaultValue = "10") Integer size,
-            @RequestParam(value = "usersIds", required = false) Set<Long> usersIds) {
-        usersIds = usersIds == null ? new HashSet<>() : usersIds;
-        return usersService.getAllUsers(from, size, usersIds);
+            @RequestParam(value = "ids", required = false) Set<Long> ids) {
+        ids = ids == null ? new HashSet<>() : ids;
+        return usersService.getAllUsers(from, size, ids);
     }
 
     @DeleteMapping("/{userId}")

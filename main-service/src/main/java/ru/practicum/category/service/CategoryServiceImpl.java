@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ApiError.exception.BadRequestException;
+import ru.practicum.ApiError.exception.ConflictException;
 import ru.practicum.ApiError.exception.NotFoundException;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
@@ -95,7 +96,7 @@ public class CategoryServiceImpl implements CategoryService {
     public void isCategoryNameIsBusy(String name) {
         if (categoryRepository.findFirstByName(name) != null) {
             log.error("Категория \"{}\" уже существует.",name);
-            throw new BadRequestException("Категория уже существует.");
+            throw new ConflictException("Категория уже существует.");
         }
     }
 
@@ -111,7 +112,7 @@ public class CategoryServiceImpl implements CategoryService {
     public void isCategoryUsing(Long catId) {
         if (eventRepository.findFirstByCategory(catId) != null) {
             log.error("Категория c ID = {} используется и не может быть удалена.",catId);
-            throw new BadRequestException("Категория c ID = " + catId + " используется и не может быть удалена.");
+            throw new ConflictException("Категория c ID = " + catId + " используется и не может быть удалена.");
         }
     }
 }

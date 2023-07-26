@@ -51,7 +51,7 @@ public class ErrorHandler {
                 LocalDateTime.now());
     }
 
-    @ExceptionHandler(NotFoundException.class)
+/*    @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     public ErrorResponse onNotFoundException(NotFoundException e) {
@@ -59,7 +59,7 @@ public class ErrorHandler {
                 "Запрашиваемый объект не найден или недоступен.",
                 e.getMessage(),
                 LocalDateTime.now());
-    }
+    }*/
 
     @ExceptionHandler(ValidationException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
@@ -71,12 +71,32 @@ public class ErrorHandler {
                 LocalDateTime.now());
     }
 
-    @ExceptionHandler(ConflictException.class)
+/*    @ExceptionHandler(ConflictException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ResponseBody
     public ErrorResponse onConflictException(ConflictException e) {
         return new ErrorResponse(HttpStatus.FORBIDDEN,
                 "Событие не удовлетворяет правилам редактирования.",
+                e.getMessage(),
+                LocalDateTime.now());
+    }*/
+
+/*    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ErrorResponse onBadRequestException(BadRequestException e) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST,
+                "Некорректный запрос.",
+                e.getMessage(),
+                LocalDateTime.now());
+    }*/
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ErrorResponse onMethodNotAllowedException(HttpRequestMethodNotSupportedException e) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST,
+                "Такого метода нет.",
                 e.getMessage(),
                 LocalDateTime.now());
     }
@@ -86,17 +106,27 @@ public class ErrorHandler {
     @ResponseBody
     public ErrorResponse onBadRequestException(BadRequestException e) {
         return new ErrorResponse(HttpStatus.BAD_REQUEST,
-                "Некорректный запрос.",
+                "The required object was not found.",
                 e.getMessage(),
                 LocalDateTime.now());
     }
 
-    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConflictException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
     @ResponseBody
-    public ErrorResponse onMethodNotAllowedException(HttpRequestMethodNotSupportedException e) {
-        return new ErrorResponse(HttpStatus.BAD_REQUEST,
-                "Такого метода нет.",
+    public ErrorResponse onConflictException(ConflictException e) {
+        return new ErrorResponse(HttpStatus.CONFLICT,
+                "Integrity constraint has been violated.",
+                e.getMessage(),
+                LocalDateTime.now());
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public ErrorResponse onNotFoundException(NotFoundException e) {
+        return new ErrorResponse(HttpStatus.NOT_FOUND,
+                "The required object was not found.",
                 e.getMessage(),
                 LocalDateTime.now());
     }

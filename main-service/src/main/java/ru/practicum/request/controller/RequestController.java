@@ -12,18 +12,18 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/users/{userId}/requests")
+@RequestMapping(path = "/users/{userId}/requests")
 @RequiredArgsConstructor
 @Validated
 public class RequestController {
 
     private final RequestService requestService;
 
-    @PostMapping("/{eventId}")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ParticipationRequestDto createRequest(
             @Positive @PathVariable Long userId,
-            @Positive @PathVariable Long eventId) {
+            @Positive @RequestParam(value = "eventId", required = true) Long eventId) {
         return requestService.createRequest(userId, eventId);
     }
 

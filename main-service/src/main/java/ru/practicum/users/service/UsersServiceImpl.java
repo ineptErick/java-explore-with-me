@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.ApiError.exception.BadRequestException;
+import ru.practicum.ApiError.exception.ConflictException;
 import ru.practicum.ApiError.exception.NotFoundException;
 import ru.practicum.users.dto.NewUserRequest;
 import ru.practicum.users.dto.UserDto;
@@ -37,7 +37,7 @@ public class UsersServiceImpl implements UsersService {
             return UserMapper.INSTANT.toUserDto(user);
         } else {
             log.error("Не удалось создать пользователя. Email уже занят.");
-            throw new BadRequestException("Данный адрес почты уже занят.");
+            throw new ConflictException("Данный адрес почты уже занят.");
         }
     }
 

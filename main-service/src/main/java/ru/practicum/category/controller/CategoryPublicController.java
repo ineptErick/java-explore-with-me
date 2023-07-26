@@ -11,7 +11,7 @@ import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/admin/categories")
+@RequestMapping(path = "/categories")
 @RequiredArgsConstructor
 public class CategoryPublicController {
 

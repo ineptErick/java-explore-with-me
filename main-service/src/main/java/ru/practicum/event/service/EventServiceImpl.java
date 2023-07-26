@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ApiError.exception.BadRequestException;
 import ru.practicum.ApiError.exception.ConflictException;
 import ru.practicum.ApiError.exception.NotFoundException;
-import ru.practicum.ApiError.exception.ValidationException;
 //import ru.practicum.StatisticClientController;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.model.CategoryMapper;
@@ -94,7 +93,7 @@ public class EventServiceImpl implements EventService {
         }
         return EventMapper.INSTANT.toEventFullDto(
                 eventRepository.save(
-                        updateEvent(eventForUpdate, updateEvent)));
+                        updateEvent(eventForUpdate, updateEvent, isAdmin)));
     }
 
     @Override
@@ -145,8 +144,11 @@ public class EventServiceImpl implements EventService {
         if (event.getParticipantLimit() == 0) {
             throw new BadRequestException("Запросы не требуют модерации. Лимит на участников не установлен.");
         }
+        if (event.getParticipantLimit() == event.getParticipants().size()) {
+            throw new ConflictException("Свободных мест нет.");
+        }
         EventRequestStatusUpdateResult eventRequestStatusUpdateResult = new EventRequestStatusUpdateResult();
-        List<Request> requestsList = requestRepository.findAllByIdInAndStatusEquals(
+        List<Request> requestsList = requestRepository.findAllByIdInAndStatus(
                 requests.getRequestIds(), RequestStatus.PENDING);
         if (requests.getStatus().equals(RequestStatus.CONFIRMED)) {
             int freePlaces = event.getParticipantLimit() - event.getParticipants().size();
@@ -192,7 +194,7 @@ public class EventServiceImpl implements EventService {
 
 
     @Override
-    public Event updateEvent(Event updatedEvent, UpdateEventRequest updateEventRequest) {
+    public Event updateEvent(Event updatedEvent, UpdateEventRequest updateEventRequest, Boolean isAdmin) {
         Optional.ofNullable(updateEventRequest.getAnnotation()).ifPresent(updatedEvent::setAnnotation);
         Optional.ofNullable(updateEventRequest.getCategory()).ifPresent(
                 c -> updatedEvent.setCategory(categoryService.getCategoryModelById(c)));
@@ -209,9 +211,18 @@ public class EventServiceImpl implements EventService {
         Optional.ofNullable(updateEventRequest.getPaid()).ifPresent(updatedEvent::setPaid);
         Optional.ofNullable(updateEventRequest.getParticipantLimit()).ifPresent(updatedEvent::setParticipantLimit);
         Optional.ofNullable(updateEventRequest.getRequestModeration()).ifPresent(updatedEvent::setRequestModeration);
-        Optional.ofNullable(updateEventRequest.getStateAction()).ifPresent(
-                s -> setEventStateByEventStateAction(updatedEvent, updateEventRequest.getStateAction())
-        );
+        if (isAdmin) {
+            if (updateEventRequest.getStateAction() != null
+            && updatedEvent.getState().equals(EventState.PENDING)) {
+                setEventStateByEventStateAction(updatedEvent, updateEventRequest.getStateAction());
+            } else {
+                throw new ConflictException("Мероприятие с ID = " + updatedEvent.getId() + " уже опубликовано/отменено.");
+            }
+        } else {
+            Optional.ofNullable(updateEventRequest.getStateAction()).ifPresent(
+                    s -> setEventStateByEventStateAction(updatedEvent, updateEventRequest.getStateAction())
+            );
+        }
         Optional.ofNullable(updateEventRequest.getTitle()).ifPresent(updatedEvent::setTitle);
         return updatedEvent;
     }
@@ -236,7 +247,7 @@ public class EventServiceImpl implements EventService {
     public void checkIfEvenDateCorrect(LocalDateTime evenDate) {
         if (LocalDateTime.now().plusHours(2).isAfter(evenDate)) {
             log.error("Некорректная дата начала мероприятия. (Меньше 2-х часов до начала).");
-            throw new ValidationException("Некорректная дата начала мероприятия. (Меньше 2-х часов до начала).");
+            throw new ConflictException("Некорректная дата начала мероприятия. (Меньше 2-х часов до начала).");
         }
     }
 
@@ -336,10 +347,10 @@ public class EventServiceImpl implements EventService {
         }
         Page<Event> eventsPage;
         if (text != null) {
-            byAnnotation = QEvent.event.annotation.likeIgnoreCase(text);
-            byDescription = QEvent.event.description.likeIgnoreCase(text);
+            byAnnotation = QEvent.event.annotation.likeIgnoreCase("%" + text + "%");
+            byDescription = QEvent.event.description.likeIgnoreCase("%" + text + "%");
             eventsPage = eventRepository.findAll(
-                    byAnnotation.and(byDescription).and(byPaid).and(byDate).and(byCategories).and(byState), pageable);
+                    byAnnotation.or(byDescription).and(byPaid).and(byDate).and(byCategories).and(byState), pageable);
         } else {
             eventsPage = eventRepository.findAll(
                     byPaid.and(byDate).and(byCategories).and(byState), pageable);
@@ -356,7 +367,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto getEventByIdPubic(Long eventId) {
-        Event event = eventRepository.findFirstByIdAndState(eventId, EventState.PUBLISHED.toString());
+        Event event = eventRepository.findFirstByIdAndState(eventId, EventState.PUBLISHED);
         if (event != null) {
             return EventMapper.INSTANT.toEventFullDto(event);
         } else {
