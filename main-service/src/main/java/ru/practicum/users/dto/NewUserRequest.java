@@ -1,13 +1,19 @@
 package ru.practicum.users.dto;
 
-import javax.validation.constraints.NotBlank;
+import lombok.Data;
 
-//Данные нового пользователя
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
+@Data
 public class NewUserRequest {
-    //Почтовый адрес
-    @NotBlank
-    private String email;
-    //Имя
+
     @NotBlank
     private String name;
+
+    @NotBlank
+    @Pattern(regexp = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" +
+            "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")
+    private String email;
+
 }

@@ -1,0 +1,6 @@
+DROP TABLE IF EXISTS public.users CASCADE;
+DROP TABLE IF EXISTS public.requests CASCADE;
+DROP TABLE IF EXISTS public.locations CASCADE;
+DROP TABLE IF EXISTS public.events CASCADE;
+DROP TABLE IF EXISTS public.compilation CASCADE;
+DROP TABLE IF EXISTS public.categories CASCADE;

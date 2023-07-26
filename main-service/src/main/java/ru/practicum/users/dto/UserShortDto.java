@@ -1,13 +1,14 @@
 package ru.practicum.users.dto;
 
-import javax.validation.constraints.NotBlank;
+import lombok.Builder;
+import lombok.Data;
 
-//Пользователь (краткая информация)
+@Data
+@Builder
 public class UserShortDto {
-    //Идентификатор
-    @NotBlank
-    private Long id;
-    //Имя
-    @NotBlank
+
     private String name;
+
+    private String email;
+
 }

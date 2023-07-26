@@ -1,23 +1,15 @@
 package ru.practicum.users.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
-
-//TODO
-// Валидацию почты через регулярные выражения
-// Имя NotBlank
-//Пользователь
 @Data
+@Builder
 public class UserDto {
-    //Почтовый адрес
-    @NotBlank
-    private String email;
-    //Идентификатор
-    //readOnly: true
-    @NotBlank
+
     private Long id;
-    //Имя
-    @NotBlank
+
+    private String email;
+
     private String name;
 }

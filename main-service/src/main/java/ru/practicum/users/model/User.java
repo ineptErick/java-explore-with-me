@@ -1,30 +1,32 @@
 package ru.practicum.users.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import ru.practicum.event.model.Event;
-import ru.practicum.request.model.Request;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.util.List;
 
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table (name = "users")
-@Data
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id", nullable = false)
     private Long id;
 
     @NotBlank
-    private String email;
-
-    @NotBlank
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "id")
-    private List<Event> events;
+    @NotBlank
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
 
-    @OneToMany
-    private List<Request> requests;
 }

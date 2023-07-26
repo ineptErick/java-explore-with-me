@@ -5,12 +5,16 @@ import ru.practicum.users.dto.UserDto;
 import ru.practicum.users.model.User;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 public interface UsersService {
-    UserDto post(User user);
+    UserDto createUser(NewUserRequest newUserRequest);
 
-    List<UserDto> getAllUsers(Map<String, String> params);
+    List<UserDto> getAllUsers(Integer from, Integer size, Set<Long> usersIds);
 
     void deleteUser(Long userId);
+
+    User getUserById(Long userId);
+
+    boolean isUserPresentByEmail(String email);
 }
