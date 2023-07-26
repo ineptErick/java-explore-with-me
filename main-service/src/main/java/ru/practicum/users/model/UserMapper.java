@@ -17,8 +17,8 @@ public enum UserMapper {
 
     public UserShortDto toUserShortDto(User user) {
         return UserShortDto.builder()
+                .id(user.getId())
                 .name(user.getName())
-                .email(user.getEmail())
                 .build();
     }
 

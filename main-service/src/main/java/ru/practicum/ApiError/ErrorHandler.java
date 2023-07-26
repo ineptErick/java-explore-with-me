@@ -2,7 +2,6 @@ package ru.practicum.ApiError;
 
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.ApiError.exception.BadRequestException;
 
 
 @RestControllerAdvice
