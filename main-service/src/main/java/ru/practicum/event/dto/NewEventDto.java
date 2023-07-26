@@ -1,35 +1,53 @@
 package ru.practicum.event.dto;
 
-import ru.practicum.location.LocationDto;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+import ru.practicum.event.dto.location.LocationDto;
 
-//Новое событие
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class NewEventDto {
-    //Краткое описание события
-    //maxLength: 2000
-    //minLength: 20
+
+    @NotBlank
+    @Size(min = 20, max = 2000)
     private String annotation;
-    //id категории к которой относится событие
-    private Long category;
-    //Полное описание события
-    //maxLength: 7000
-    //minLength: 20
-    private String description;
-    //Дата и время на которые намечено событие в формате "yyyy-MM-dd HH:mm:ss"
-    private String eventDate;
-    //Широта и долгота места проведения события
-    private LocationDto location;
-    //Нужно ли оплачивать участие в событии
-    //default: false
-    private Boolean paid;
-    //Ограничение на количество участников. Значение 0 - означает отсутствие ограничения
-    //default: 0
-    private Integer participantLimit;
-    //Нужна ли пре-модерация заявок на участие. Если true, то все заявки будут ожидать подтверждения инициатором события.
-    //Если false - то будут подтверждаться автоматически.
-    //default: true
-    private Boolean requestModeration;
-    //Заголовок события
-    //maxLength: 120
-    //minLength: 3
+
+    @NotBlank
+    @Size(min = 3, max = 120)
     private String title;
+
+    @NotBlank
+    @Size(min = 20, max = 7000)
+    private String description;
+
+    @NotNull
+    @JsonFormat(shape =JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime eventDate;
+
+    @NotNull
+    private LocationDto location;
+
+    @NotNull
+    private Long category;
+
+    @NotNull
+    private Boolean paid;
+
+    private Integer participantLimit;
+
+    private Boolean requestModeration;
+
 }

@@ -1,7 +1,11 @@
 package ru.practicum.request.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.practicum.event.model.Event;
+import ru.practicum.request.enums.RequestStatus;
 import ru.practicum.users.model.User;
 
 import javax.persistence.*;
@@ -9,26 +13,29 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Table(name = "requests")
 public class Request {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "category_id")
+    @Column(name = "request_id", nullable = false)
     private Long id;
 
+    @Column(name = "created")
     private LocalDateTime created;
 
-    //private Long event;
-
-    //private Long requester;
-
-    private String status;
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private RequestStatus status = RequestStatus.PENDING;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User requester;
-
-    @OneToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "event_id", referencedColumnName = "event_id")
     private Event event;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    private User requester;
 }
