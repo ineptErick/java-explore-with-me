@@ -1,56 +1,89 @@
 package ru.practicum.event.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import org.springframework.boot.context.properties.bind.DefaultValue;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.WhereJoinTable;
 import org.springframework.format.annotation.DateTimeFormat;
 import ru.practicum.category.model.Category;
-import ru.practicum.location.model.Location;
+import ru.practicum.event.enums.EventState;
 import ru.practicum.users.model.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Entity
 @Table (name = "events")
 public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "event_id", nullable = false)
     private Long id;
 
-    @Max(2000) @Min(20)
+    @Column(name = "annotation", nullable = false)
     private String annotation;
 
-//    @Positive
-//    private Long category;
-
-    @OneToOne
-    private Category category;
-
-    @Max(7000) @Min(20)
-    private String description;
-
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime eventDate;
-
-    @OneToOne
-    private Location location;
-
-    private Boolean paid;
-
-    private Integer participantLimit;
-
-    private Boolean requestModeration;
-
+    @Column(name = "title", nullable = false)
     private String title;
 
+    @Column(name = "description", nullable = false)
+    private String description;
 
-//    @OneToMany
-//    @JoinColumn(name = "id")
-//    private List<User> users;
+    @Builder.Default
+    @Column(name = "state", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private EventState state = EventState.PENDING;
+
+    @CreationTimestamp
+    @Column(name = "created")
+    private LocalDateTime createdOn;
+
+    @Column(name = "published")
+    private LocalDateTime  publishedOn;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "start_date")
+    private LocalDateTime eventDate;
+
+    @ManyToOne
+    @JoinColumn(name = "initiator_id", referencedColumnName = "user_id")
+    private User initiator;
+
+    @Column(name = "lat")
+    private Float lat;
+
+    @Column(name = "lon")
+    private Float lon;
+
+
+    @ManyToOne
+    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
+    private Category category;
+
+    @Column(name = "paid")
+    private Boolean paid;
+
+
+    @Column(name = "participant_limit")
+    private Integer participantLimit;
+
+    @Column(name = "request_Moderation")
+    private Boolean requestModeration;
+
+    @WhereJoinTable(clause = "status='CONFIRMED'")
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinTable(name = "requests",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    List<User> participants = new ArrayList<>();
+
 }

@@ -1,26 +1,23 @@
 package ru.practicum.event.dto;
 
+import lombok.Builder;
+import lombok.Data;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.users.dto.UserShortDto;
 
-//Краткая информация о событии
+import java.time.LocalDateTime;
+
+@Data
+@Builder
 public class EventShortDto {
-    //Краткое описание
-    private String annotation;
-    //Категория
-    private CategoryDto category;
-    //Количество одобренных заявок на участие в данном событии
-    private Integer confirmedRequests;
-    //Дата и время на которые намечено событие (в формате "yyyy-MM-dd HH:mm:ss")
-    private String eventDate;
-    //Идентификатор
+
     private Long id;
-    //Пользователь (краткая информация)
-    private UserShortDto initiator;
-    //Нужно ли оплачивать участие
-    private Boolean paid;
-    //Заголовок
+    private String annotation;
     private String title;
-    //Количество просмотрев события
+    private LocalDateTime eventDate;
+    private UserShortDto initiator;
+    private CategoryDto category;
+    private Integer confirmedRequests;
+    private Boolean paid;
     private Long views;
 }
