@@ -62,7 +62,7 @@ public class EventPrivServiceImpl implements EventPrivService {
         CategoryDto categoryDto = categoryUtils.getCategoryById(newEvent.getCategory());
         Event event = EventMapper.INSTANT.toEvent(newEvent);
         event.setInitiator(user);
-        event.setCategory(CategoryMapper.INSTANT.categoryDtoToCategory(categoryDto));
+        event.setCategory(CategoryMapper.categoryDtoToCategory(categoryDto));
         eventRepository.save(event);
         log.debug("Пользователь с ID = {} создал мероприятие \"{}\". ID = {}.",
                 userId, newEvent.getTitle(), event.getId());
@@ -116,7 +116,7 @@ public class EventPrivServiceImpl implements EventPrivService {
             throw new BadRequestException("Только организатор может просматривать список запросов на участие.");
         } else {
             List<Request> request = requestRepository.findAllByEventId(eventId);
-            return RequestMapper.INSTANT.toParticipationRequestDto(request);
+            return RequestMapper.toParticipationRequestDto(request);
         }
     }
 
@@ -151,12 +151,12 @@ public class EventPrivServiceImpl implements EventPrivService {
                 if (freePlaces != count) {
                     request.setStatus(RequestStatus.CONFIRMED);
                     eventRequestStatusUpdateResult.getConfirmedRequests()
-                            .add(RequestMapper.INSTANT.toParticipationRequestDto(request));
+                            .add(RequestMapper.toParticipationRequestDto(request));
                     count++;
                 } else {
                     request.setStatus(RequestStatus.REJECTED);
                     eventRequestStatusUpdateResult.getRejectedRequests()
-                            .add(RequestMapper.INSTANT.toParticipationRequestDto(request));
+                            .add(RequestMapper.toParticipationRequestDto(request));
                 }
                 log.debug("Статус запроса с ID = {} на \"{}\".", request.getId(), request.getStatus());
             }
@@ -166,7 +166,7 @@ public class EventPrivServiceImpl implements EventPrivService {
                 log.info("Обработка запроса с ID = {}.", request.getId());
                 request.setStatus(RequestStatus.REJECTED);
                 eventRequestStatusUpdateResult.getRejectedRequests()
-                        .add(RequestMapper.INSTANT.toParticipationRequestDto(request));
+                        .add(RequestMapper.toParticipationRequestDto(request));
                 log.debug("Статус запроса с ID = {} на \"{}\".", request.getId(), RequestStatus.REJECTED);
             }
         }

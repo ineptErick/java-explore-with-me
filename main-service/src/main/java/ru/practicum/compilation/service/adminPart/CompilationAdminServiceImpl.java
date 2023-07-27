@@ -35,9 +35,9 @@ public class CompilationAdminServiceImpl implements CompilationAdminService {
     public CompilationDto createCompilation(NewCompilationDto newCompilation) {
         log.info("Администратор создает новую подборку \"{}\".", newCompilation.getTitle());
         List<Event> events = eventUtils.getEventByIds(newCompilation.getEvents());
-        Compilation compilation = compilationRepository.save(CompilationMapper.INSTANT.toCompilation(newCompilation, events));
+        Compilation compilation = compilationRepository.save(CompilationMapper.toCompilation(newCompilation, events));
         log.debug("Администратор создал новую подборку \"{}\" с ID = {}.", compilation.getTitle(), compilation.getId());
-        return CompilationMapper.INSTANT.toCompilationDto(compilation);
+        return CompilationMapper.toCompilationDto(compilation);
     }
 
     @Override
@@ -51,9 +51,9 @@ public class CompilationAdminServiceImpl implements CompilationAdminService {
         if (events != null) {
             compilationOld.setEvents(events);
         }
-        Compilation compilation = compilationRepository.save(CompilationMapper.INSTANT.toCompilation(compilationOld, events));
+        Compilation compilation = compilationRepository.save(CompilationMapper.toCompilation(compilationOld, events));
         log.debug("Администратор обновил подборку \"{}\" с ID = {}.", compilation.getTitle(), compilation.getId());
-            return CompilationMapper.INSTANT.toCompilationDto(compilation);
+            return CompilationMapper.toCompilationDto(compilation);
     }
 
     @Override

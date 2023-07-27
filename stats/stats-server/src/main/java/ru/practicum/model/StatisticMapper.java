@@ -1,14 +1,15 @@
 package ru.practicum.model;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.dto.StatisticPostDto;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public enum StatisticMapper {
-    INSTANT;
+@UtilityClass
+public final class StatisticMapper {
 
-    public StatisticPostDto toStatisticPostDto(Statistic statistic) {
+    public static StatisticPostDto toStatisticPostDto(Statistic statistic) {
         StatisticPostDto statisticPostDto = new StatisticPostDto(
                 statistic.getIp(),
                 statistic.getUri(),
@@ -17,7 +18,7 @@ public enum StatisticMapper {
         return statisticPostDto;
     }
 
-    public Statistic toStatistic(StatisticPostDto statisticPostDto) {
+    public static Statistic toStatistic(StatisticPostDto statisticPostDto) {
         Statistic statistic = new Statistic();
         statistic.setApp(statisticPostDto.getApp());
         statistic.setIp(statisticPostDto.getIp());

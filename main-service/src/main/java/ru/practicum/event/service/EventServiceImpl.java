@@ -24,7 +24,6 @@ import ru.practicum.event.enums.EventState;
 import ru.practicum.event.enums.EventStateAction;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.EventMapper;
-import ru.practicum.event.model.QEvent;
 import ru.practicum.event.repository.EventRepository;
 
 import ru.practicum.request.dto.EventRequestStatusUpdateRequest;
@@ -67,7 +66,7 @@ public class EventServiceImpl implements EventService {
         CategoryDto categoryDto = categoryService.getCategoryById(newEvent.getCategory());
         Event event = EventMapper.INSTANT.toEvent(newEvent);
         event.setInitiator(user);
-        event.setCategory(CategoryMapper.INSTANT.categoryDtoToCategory(categoryDto));
+        event.setCategory(CategoryMapper.categoryDtoToCategory(categoryDto));
         eventRepository.save(event);
         log.debug("Пользователь с ID = {} создал мероприятие \"{}\". ID = {}.",
                 userId, newEvent.getTitle(), event.getId());
@@ -125,7 +124,7 @@ public class EventServiceImpl implements EventService {
             throw new BadRequestException("Только организатор может просматривать список запросов на участие.");
         } else {
             List<Request> request = requestRepository.findAllByEventId(eventId);
-            return RequestMapper.INSTANT.toParticipationRequestDto(request);
+            return RequestMapper.toParticipationRequestDto(request);
         }
     }
 
@@ -161,12 +160,12 @@ public class EventServiceImpl implements EventService {
                 if (freePlaces != count) {
                     request.setStatus(RequestStatus.CONFIRMED);
                     eventRequestStatusUpdateResult.getConfirmedRequests()
-                            .add(RequestMapper.INSTANT.toParticipationRequestDto(request));
+                            .add(RequestMapper.toParticipationRequestDto(request));
                     count++;
                 } else {
                     request.setStatus(RequestStatus.REJECTED);
                     eventRequestStatusUpdateResult.getRejectedRequests()
-                            .add(RequestMapper.INSTANT.toParticipationRequestDto(request));
+                            .add(RequestMapper.toParticipationRequestDto(request));
                 }
                 log.debug("Статус запроса с ID = {} на \"{}\".", request.getId(), request.getStatus());
             }
@@ -176,7 +175,7 @@ public class EventServiceImpl implements EventService {
                 log.info("Обработка запроса с ID = {}.", request.getId());
                 request.setStatus(RequestStatus.REJECTED);
                 eventRequestStatusUpdateResult.getRejectedRequests()
-                        .add(RequestMapper.INSTANT.toParticipationRequestDto(request));
+                        .add(RequestMapper.toParticipationRequestDto(request));
                 log.debug("Статус запроса с ID = {} на \"{}\".", request.getId(), RequestStatus.REJECTED);
             }
         }
@@ -295,7 +294,7 @@ public class EventServiceImpl implements EventService {
         BooleanExpression byUsers;
         BooleanExpression byStates;
         BooleanExpression byCategories;
-        BooleanExpression byDate = QEvent.event.eventDate.between(rangeStart, rangeEnd);
+        BooleanExpression byDate = Event.eventDate.between(rangeStart, rangeEnd);
         if (users.isEmpty()) {
             byUsers = QEvent.event.initiator.id.notIn(users);
         } else {

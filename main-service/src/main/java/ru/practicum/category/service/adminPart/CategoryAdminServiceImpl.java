@@ -28,9 +28,9 @@ public class CategoryAdminServiceImpl implements CategoryAdminService {
         log.info("Создание новой категории: {}.", newCategory.getName());
         categoryUtils.isCategoryNameIsBusy(newCategory.getName());
         Category category = categoryRepository.save(
-                CategoryMapper.INSTANT.newCategoryDtoToCategory(newCategory));
+                CategoryMapper.newCategoryDtoToCategory(newCategory));
         log.debug("Категория создана. ID = {}.", category.getId());
-        return CategoryMapper.INSTANT.toCategoryDto(category);
+        return CategoryMapper.toCategoryDto(category);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class CategoryAdminServiceImpl implements CategoryAdminService {
         category.setName(updatedCategory.getName());
         categoryRepository.save(category);
         log.debug("Категория с ID = {} обновлена.", catId);
-        return CategoryMapper.INSTANT.toCategoryDto(category);
+        return CategoryMapper.toCategoryDto(category);
     }
 
     @Override

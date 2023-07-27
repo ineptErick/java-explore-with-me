@@ -36,9 +36,9 @@ public class CategoryServiceImpl implements CategoryService {
         log.info("Создание новой категории: {}.", newCategory.getName());
         isCategoryNameIsBusy(newCategory.getName());
         Category category = categoryRepository.save(
-                CategoryMapper.INSTANT.newCategoryDtoToCategory(newCategory));
+                CategoryMapper.newCategoryDtoToCategory(newCategory));
         log.debug("Категория создана. ID = {}.", category.getId());
-        return CategoryMapper.INSTANT.toCategoryDto(category);
+        return CategoryMapper.toCategoryDto(category);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class CategoryServiceImpl implements CategoryService {
         category.setName(updatedCategory.getName());
         categoryRepository.save(category);
         log.debug("Категория с ID = {} обновлена.", catId);
-        return CategoryMapper.INSTANT.toCategoryDto(category);
+        return CategoryMapper.toCategoryDto(category);
     }
 
     @Override
@@ -72,7 +72,7 @@ public class CategoryServiceImpl implements CategoryService {
         Page<Category> pageCategory = categoryRepository.getAllCategoriesById(pageRequest);
         List<Category> requests = pageCategory.getContent();
         List<CategoryDto> requestsDto = requests.stream()
-                    .map(request -> CategoryMapper.INSTANT.toCategoryDto(request))
+                    .map(request -> CategoryMapper.toCategoryDto(request))
                     .collect(Collectors.toList());
         return requestsDto;
     }
@@ -80,7 +80,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto getCategoryById(Long catId) {
         log.info("Получение категории по ID = {}.", catId);
-        return CategoryMapper.INSTANT.toCategoryDto(categoryRepository.findById(catId).orElseThrow(
+        return CategoryMapper.toCategoryDto(categoryRepository.findById(catId).orElseThrow(
                 () -> new NotFoundException("Категория с ID = " + catId + " не найдена.")
         ));
     }

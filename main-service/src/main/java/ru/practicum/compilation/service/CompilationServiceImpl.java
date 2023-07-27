@@ -36,9 +36,9 @@ public class CompilationServiceImpl implements CompilationService {
     public CompilationDto createCompilation(NewCompilationDto newCompilation) {
         log.info("Администратор создает новую подборку \"{}\".", newCompilation.getTitle());
         List<Event> events = eventService.getEventByIds(newCompilation.getEvents());
-        Compilation compilation = compilationRepository.save(CompilationMapper.INSTANT.toCompilation(newCompilation, events));
+        Compilation compilation = compilationRepository.save(CompilationMapper.toCompilation(newCompilation, events));
         log.debug("Администратор создал новую подборку \"{}\" с ID = {}.", compilation.getTitle(), compilation.getId());
-        return CompilationMapper.INSTANT.toCompilationDto(compilation);
+        return CompilationMapper.toCompilationDto(compilation);
     }
 
     @Override
@@ -52,9 +52,9 @@ public class CompilationServiceImpl implements CompilationService {
         if (events != null) {
             compilationOld.setEvents(events);
         }
-        Compilation compilation = compilationRepository.save(CompilationMapper.INSTANT.toCompilation(compilationOld, events));
+        Compilation compilation = compilationRepository.save(CompilationMapper.toCompilation(compilationOld, events));
         log.debug("Администратор обновил подборку \"{}\" с ID = {}.", compilation.getTitle(), compilation.getId());
-            return CompilationMapper.INSTANT.toCompilationDto(compilation);
+            return CompilationMapper.toCompilationDto(compilation);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     public CompilationDto getCompilationByIdPublic(Long compId) {
-        return CompilationMapper.INSTANT.toCompilationDto(getCompilationById(compId));
+        return CompilationMapper.toCompilationDto(getCompilationById(compId));
     }
 
     @Override
@@ -84,7 +84,7 @@ public class CompilationServiceImpl implements CompilationService {
         log.info("Выгрузка списка подборок с параметрами: pinned = {}, size={}, from={}.",pinned, size, page);
         Page<Compilation> pageCompilation = compilationRepository.findAllByPinned(pinned, pageRequest);
         List<Compilation> requests = pageCompilation.getContent();
-        return CompilationMapper.INSTANT.toCompilationDto(requests);
+        return CompilationMapper.toCompilationDto(requests);
     }
 
 }

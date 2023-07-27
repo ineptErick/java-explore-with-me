@@ -27,7 +27,7 @@ public class CompilationPubServiceImpl implements CompilationPubService {
 
     @Override
     public CompilationDto getCompilationByIdPublic(Long compId) {
-        return CompilationMapper.INSTANT.toCompilationDto(
+        return CompilationMapper.toCompilationDto(
                 compilationUtils.getCompilationById(compId));
     }
 
@@ -38,7 +38,7 @@ public class CompilationPubServiceImpl implements CompilationPubService {
         log.info("Выгрузка списка подборок с параметрами: pinned = {}, size={}, from={}.",pinned, size, page);
         Page<Compilation> pageCompilation = compilationRepository.findAllByPinned(pinned, pageRequest);
         List<Compilation> requests = pageCompilation.getContent();
-        return CompilationMapper.INSTANT.toCompilationDto(requests);
+        return CompilationMapper.toCompilationDto(requests);
     }
 
 }

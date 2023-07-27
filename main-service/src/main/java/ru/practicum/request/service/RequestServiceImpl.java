@@ -70,14 +70,14 @@ public class RequestServiceImpl implements RequestService {
                 .build());
         log.debug("Запрос на участие в мероприятии с ID = {} от пользователя с ID = {} создан под ID = {}.",
                 eventId, userId, request.getId());
-        return RequestMapper.INSTANT.toParticipationRequestDto(request);
+        return RequestMapper.toParticipationRequestDto(request);
     }
 
     @Override
     public List<ParticipationRequestDto> getAllUsersRequests(Long userId) {
         log.info("Пользователь с ID = {} запросил свои заявки на участия в мероприятиях.", userId);
         usersService.isUserPresent(userId);
-        return RequestMapper.INSTANT.toParticipationRequestDto(
+        return RequestMapper.toParticipationRequestDto(
                 requestRepository.findAllByRequesterId(userId));
     }
 
@@ -92,7 +92,7 @@ public class RequestServiceImpl implements RequestService {
             throw new BadRequestException("Вы не можете отменить чужую заявку.");
         }
         request.setStatus(RequestStatus.CANCELED);
-        return RequestMapper.INSTANT.toParticipationRequestDto(request);
+        return RequestMapper.toParticipationRequestDto(request);
     }
 
     @Override

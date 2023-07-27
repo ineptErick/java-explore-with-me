@@ -28,7 +28,7 @@ public class CategoryUtils {
 
     public CategoryDto getCategoryById(Long catId) {
         log.info("Получение категории по ID = {}.", catId);
-        return CategoryMapper.INSTANT.toCategoryDto(categoryRepository.findById(catId).orElseThrow(
+        return CategoryMapper.toCategoryDto(categoryRepository.findById(catId).orElseThrow(
                 () -> new NotFoundException("Категория с ID = " + catId + " не найдена.")
         ));
     }
