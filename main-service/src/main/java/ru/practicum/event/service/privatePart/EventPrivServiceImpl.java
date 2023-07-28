@@ -60,14 +60,14 @@ public class EventPrivServiceImpl implements EventPrivService {
         eventUtils.checkIfEvenDateCorrect(newEvent.getEventDate());
         User user = usersService.getUserById(userId);
         CategoryDto categoryDto = categoryUtils.getCategoryById(newEvent.getCategory());
-        Event event = EventMapper.INSTANT.toEvent(newEvent);
+        Event event = EventMapper.toEvent(newEvent);
         event.setInitiator(user);
         event.setCategory(CategoryMapper.categoryDtoToCategory(categoryDto));
         eventRepository.save(event);
         log.debug("Пользователь с ID = {} создал мероприятие \"{}\". ID = {}.",
                 userId, newEvent.getTitle(), event.getId());
         return client.setViewsEventFullDto(
-                EventMapper.INSTANT.toEventFullDto(event));
+                EventMapper.toEventFullDto(event));
     }
 
     @Override
@@ -82,7 +82,7 @@ public class EventPrivServiceImpl implements EventPrivService {
         eventUtils.checkIfEventCanBeUpdated(updateEvent, eventForUpdate, user);
         log.debug("Пользователь с ID = {} обновил мероприятие с ID = {}.", userId, eventId);
         return client.setViewsEventFullDto(
-                EventMapper.INSTANT.toEventFullDto(
+                EventMapper.toEventFullDto(
                         eventRepository.save(
                                 eventUtils.updateEvent(eventForUpdate, updateEvent, false))));
     }
@@ -92,7 +92,7 @@ public class EventPrivServiceImpl implements EventPrivService {
         log.info("Пользователь с ID = {} запросил информации о мероприятии с ID = {}.", userId, eventId);
         usersService.isUserPresent(userId);
         return client.setViewsEventFullDto(
-                EventMapper.INSTANT.toEventFullDto(
+                EventMapper.toEventFullDto(
                         eventUtils.getEventById(eventId)));
     }
 
@@ -103,7 +103,7 @@ public class EventPrivServiceImpl implements EventPrivService {
         log.info("Выгрузка списка мероприятий для пользователя с ID = {} с параметрами: size={}, from={}.",userId, size, page);
         Page<Event> pageEvents = eventRepository.getAllEventsByUserId(userId, pageRequest);
         List<Event> requests = pageEvents.getContent();
-        List<EventShortDto> requestsDto = EventMapper.INSTANT.toEventShortDto(requests);
+        List<EventShortDto> requestsDto = EventMapper.toEventShortDto(requests);
         return client.setViewsEventShortDtoList(requestsDto);
     }
 

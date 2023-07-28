@@ -1,5 +1,6 @@
 package ru.practicum.event.model;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
@@ -13,10 +14,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public enum EventMapper {
-    INSTANT;
+@UtilityClass
+public final class EventMapper {
 
-    public EventShortDto toEventShortDto(Event event) {
+    public static EventShortDto toEventShortDto(Event event) {
         Integer confirmRequests = Optional.ofNullable(event.getParticipants())
                 .orElse(new ArrayList<>()).size();
         return EventShortDto.builder()
@@ -30,12 +31,12 @@ public enum EventMapper {
                         .id(event.getCategory().getId())
                         .name(event.getCategory().getName())
                         .build())
-                .initiator(UserMapper.INSTANT.toUserShortDto(event.getInitiator()))
+                .initiator(UserMapper.toUserShortDto(event.getInitiator()))
                 .views(null)
                 .build();
     }
 
-    public EventFullDto toEventFullDto(Event event) {
+    public static EventFullDto toEventFullDto(Event event) {
         return EventFullDto.builder()
                 .id(event.getId())
                 .eventDate(event.getEventDate())
@@ -58,16 +59,16 @@ public enum EventMapper {
                         .lat(event.getLat())
                         .lon(event.getLon())
                         .build())
-                .initiator(UserMapper.INSTANT.toUserShortDto(event.getInitiator()))
+                .initiator(UserMapper.toUserShortDto(event.getInitiator()))
                 .views(null)
                 .build();
     }
 
-    public List<EventShortDto> toEventShortDto(List<Event> events) {
-        return events.stream().map(EventMapper.INSTANT::toEventShortDto).collect(Collectors.toList());
+    public static List<EventShortDto> toEventShortDto(List<Event> events) {
+        return events.stream().map(EventMapper::toEventShortDto).collect(Collectors.toList());
     }
 
-    public Event toEvent(NewEventDto newEventDto) {
+    public static Event toEvent(NewEventDto newEventDto) {
         return Event.builder()
                 .annotation(newEventDto.getAnnotation())
                 .description(newEventDto.getDescription())
@@ -82,7 +83,7 @@ public enum EventMapper {
                 .build();
     }
 
-    public List<EventFullDto> iterableToList(Iterable<Event> events) {
+    public static List<EventFullDto> iterableToList(Iterable<Event> events) {
         List<EventFullDto> dtos = new ArrayList<>();
         for (Event event: events) {
             dtos.add(toEventFullDto(event));

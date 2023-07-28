@@ -64,13 +64,13 @@ public class EventServiceImpl implements EventService {
         checkIfEvenDateCorrect(newEvent.getEventDate());
         User user = usersService.getUserById(userId);
         CategoryDto categoryDto = categoryService.getCategoryById(newEvent.getCategory());
-        Event event = EventMapper.INSTANT.toEvent(newEvent);
+        Event event = EventMapper.toEvent(newEvent);
         event.setInitiator(user);
         event.setCategory(CategoryMapper.categoryDtoToCategory(categoryDto));
         eventRepository.save(event);
         log.debug("Пользователь с ID = {} создал мероприятие \"{}\". ID = {}.",
                 userId, newEvent.getTitle(), event.getId());
-        return EventMapper.INSTANT.toEventFullDto(event);
+        return EventMapper.toEventFullDto(event);
     }
 
     @Override
@@ -92,7 +92,7 @@ public class EventServiceImpl implements EventService {
             }
             log.debug("Администратор обновил мероприятие с ID = {}.", eventId);
         }
-        return EventMapper.INSTANT.toEventFullDto(
+        return EventMapper.toEventFullDto(
                 eventRepository.save(
                         updateEvent(eventForUpdate, updateEvent, isAdmin)));
     }
@@ -101,7 +101,7 @@ public class EventServiceImpl implements EventService {
     public EventFullDto getFullEventById(Long userId, Long eventId) {
         log.info("Пользователь с ID = {} запросил информации о мероприятии с ID = {}.", userId, eventId);
         usersService.isUserPresent(userId);
-        return EventMapper.INSTANT.toEventFullDto(getEventById(eventId));
+        return EventMapper.toEventFullDto(getEventById(eventId));
     }
 
     @Override
@@ -111,7 +111,7 @@ public class EventServiceImpl implements EventService {
         log.info("Выгрузка списка мероприятий для пользователя с ID = {} с параметрами: size={}, from={}.",userId, size, page);
         Page<Event> pageEvents = eventRepository.getAllEventsByUserId(userId, pageRequest);
         List<Event> requests = pageEvents.getContent();
-        List<EventShortDto> requestsDto = EventMapper.INSTANT.toEventShortDto(requests);
+        List<EventShortDto> requestsDto = EventMapper.toEventShortDto(requests);
         return requestsDto;
     }
 
@@ -314,7 +314,7 @@ public class EventServiceImpl implements EventService {
         PageRequest pageRequest = PageRequest.of(page, size);
         Iterable<Event> foundEvents = eventRepository.findAll(
                 byUsers.and(byStates).and(byCategories).and(byDate), pageRequest);
-        return EventMapper.INSTANT.iterableToList(foundEvents);
+        return EventMapper.iterableToList(foundEvents);
     }
 
     //TODO проверить (сортировка) + hit в стат
@@ -361,7 +361,7 @@ public class EventServiceImpl implements EventService {
             events.removeIf(event -> event.getParticipants().size() == event.getParticipantLimit());
         }
         statisticClient.createHit(request.getRequestURI(), request.getRemoteAddr());
-        return EventMapper.INSTANT.toEventShortDto(events);
+        return EventMapper.toEventShortDto(events);
     }
 
     @Override
@@ -369,7 +369,7 @@ public class EventServiceImpl implements EventService {
         Event event = eventRepository.findFirstByIdAndState(eventId, EventState.PUBLISHED);
         if (event != null) {
             statisticClient.createHit(request.getRequestURI(), request.getRemoteAddr());
-            return EventMapper.INSTANT.toEventFullDto(event);
+            return EventMapper.toEventFullDto(event);
         } else {
             throw new NotFoundException("Мероприятие с ID = " + eventId + " не найдено.");
         }

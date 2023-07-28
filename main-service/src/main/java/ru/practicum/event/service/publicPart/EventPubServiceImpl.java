@@ -76,7 +76,7 @@ public class EventPubServiceImpl implements EventPubService {
         }
         statisticClient.createHit(request.getRequestURI(), request.getRemoteAddr());
         return client.setViewsEventShortDtoList(
-                EventMapper.INSTANT.toEventShortDto(events));
+                EventMapper.toEventShortDto(events));
     }
 
     @Override
@@ -85,7 +85,7 @@ public class EventPubServiceImpl implements EventPubService {
         if (event != null) {
             statisticClient.createHit(request.getRequestURI(), request.getRemoteAddr());
             return client.setViewsEventFullDto(
-                    EventMapper.INSTANT.toEventFullDto(event));
+                    EventMapper.toEventFullDto(event));
         } else {
             throw new NotFoundException("Мероприятие с ID = " + eventId + " не найдено.");
         }
