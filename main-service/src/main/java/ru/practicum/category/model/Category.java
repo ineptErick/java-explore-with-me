@@ -11,10 +11,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Getter
-@Setter
-@ToString
-@RequiredArgsConstructor
+@Data
 @Table(name = "categories")
 public class Category {
 
@@ -27,20 +24,4 @@ public class Category {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
-            return false;
-        }
-        Category category = (Category) o;
-        return id != null && Objects.equals(id, category.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }

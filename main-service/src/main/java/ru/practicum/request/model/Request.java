@@ -1,19 +1,14 @@
 package ru.practicum.request.model;
 
 import lombok.*;
-import org.hibernate.Hibernate;
 import ru.practicum.event.model.Event;
 import ru.practicum.request.enums.RequestStatus;
 import ru.practicum.users.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
-@Getter
-@Setter
-@ToString
-@RequiredArgsConstructor
+@Data
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -42,21 +37,5 @@ public class Request {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User requester;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
-            return false;
-        }
-        Request request = (Request) o;
-        return id != null && Objects.equals(id, request.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 
 }

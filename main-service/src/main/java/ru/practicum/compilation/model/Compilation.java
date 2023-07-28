@@ -1,19 +1,13 @@
 package ru.practicum.compilation.model;
 
-import io.micrometer.core.instrument.Statistic;
 import lombok.*;
-import org.hibernate.Hibernate;
 import ru.practicum.event.model.Event;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-@Getter
-@Setter
-@ToString
-@RequiredArgsConstructor
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,20 +32,4 @@ public class Compilation {
             inverseJoinColumns = @JoinColumn(name = "event_id"))
     List<Event> events = new ArrayList<>();
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
-            return false;
-        }
-        Compilation compilation = (Compilation) o;
-        return id != null && Objects.equals(id, compilation.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }
