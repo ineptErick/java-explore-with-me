@@ -9,10 +9,9 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "statistic")
-@Getter
-@Setter
-@ToString
-@RequiredArgsConstructor
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Hit {
 
     @Id
