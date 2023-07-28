@@ -1,6 +1,5 @@
 package ru.practicum.compilation.model;
 
-import lombok.experimental.UtilityClass;
 import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.NewCompilationDto;
 import ru.practicum.event.model.Event;
@@ -10,10 +9,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@UtilityClass
-public final class CompilationMapper {
+public enum CompilationMapper {
+    INSTANT;
 
-    public static Compilation toCompilation(NewCompilationDto compilationDto, List<Event> events) {
+    public Compilation toCompilation(NewCompilationDto compilationDto, List<Event> events) {
         return Compilation.builder()
                 .pinned(Optional.ofNullable(compilationDto.getPinned()).orElse(false))
                 .title(compilationDto.getTitle())
@@ -21,16 +20,16 @@ public final class CompilationMapper {
                 .build();
     }
 
-    public static CompilationDto toCompilationDto(Compilation compilation) {
+    public CompilationDto toCompilationDto(Compilation compilation) {
         return CompilationDto.builder()
                 .id(compilation.getId())
                 .title(compilation.getTitle())
-                .events(EventMapper.toEventShortDto(compilation.getEvents()))
+                .events(EventMapper.INSTANT.toEventShortDto(compilation.getEvents()))
                 .pinned(compilation.getPinned())
                 .build();
     }
 
-    public static Compilation toCompilation(Compilation compilationOld, List<Event> events) {
+    public Compilation toCompilation(Compilation compilationOld, List<Event> events) {
         return Compilation.builder()
                 .id(compilationOld.getId())
                 .pinned(Optional.ofNullable(compilationOld.getPinned()).orElse(false))
@@ -39,9 +38,9 @@ public final class CompilationMapper {
                 .build();
     }
 
-    public static List<CompilationDto> toCompilationDto(List<Compilation> compilations) {
+    public List<CompilationDto> toCompilationDto(List<Compilation> compilations) {
         return compilations.stream()
-                .map(CompilationMapper::toCompilationDto)
+                .map(CompilationMapper.INSTANT::toCompilationDto)
                 .collect(Collectors.toList());
     }
 

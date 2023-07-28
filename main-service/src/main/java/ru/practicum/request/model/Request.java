@@ -1,6 +1,9 @@
 package ru.practicum.request.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.practicum.event.model.Event;
 import ru.practicum.request.enums.RequestStatus;
 import ru.practicum.users.model.User;
@@ -36,6 +39,5 @@ public class Request {
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User requester;
-
 
 }

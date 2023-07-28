@@ -1,15 +1,15 @@
 package ru.practicum.request.model;
 
-import lombok.experimental.UtilityClass;
 import ru.practicum.request.dto.ParticipationRequestDto;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@UtilityClass
-public final class RequestMapper {
+public enum RequestMapper {
 
-    public static ParticipationRequestDto toParticipationRequestDto(Request request) {
+    INSTANT;
+
+    public ParticipationRequestDto toParticipationRequestDto(Request request) {
         return ParticipationRequestDto.builder()
                 .created(request.getCreated())
                 .event((request.getEvent().getId()))
@@ -19,7 +19,7 @@ public final class RequestMapper {
                 .build();
     }
 
-    public static List<ParticipationRequestDto> toParticipationRequestDto(List<Request> requests) {
+    public List<ParticipationRequestDto> toParticipationRequestDto(List<Request> requests) {
         return requests
                 .stream()
                 .map(request -> toParticipationRequestDto(request))

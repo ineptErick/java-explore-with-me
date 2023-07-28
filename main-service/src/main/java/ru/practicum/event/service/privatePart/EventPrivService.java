@@ -1,5 +1,6 @@
 package ru.practicum.event.service.privatePart;
 
+
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.NewEventDto;

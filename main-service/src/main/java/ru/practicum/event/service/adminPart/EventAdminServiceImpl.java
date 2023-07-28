@@ -65,7 +65,7 @@ public class EventAdminServiceImpl implements EventAdminService {
         Iterable<Event> foundEvents = eventRepository.findAll(
                 byUsers.and(byStates).and(byCategories).and(byDate), pageRequest);
         return client.setViewsEventFullDtoList(
-                EventMapper.iterableToList(foundEvents));
+                EventMapper.INSTANT.iterableToList(foundEvents));
     }
 
     @Override
@@ -81,7 +81,7 @@ public class EventAdminServiceImpl implements EventAdminService {
         }
         log.debug("Администратор обновил мероприятие с ID = {}.", eventId);
         return client.setViewsEventFullDto(
-                EventMapper.toEventFullDto(
+                EventMapper.INSTANT.toEventFullDto(
                         eventRepository.save(
                                 eventUtils.updateEvent(eventForUpdate, updateEvent, true))));
     }

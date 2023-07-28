@@ -32,9 +32,9 @@ public class UsersServiceImpl implements UsersService {
         log.info("Создание пользователя с именем: {} и почтой: {}.", newUser.getName(),
                 newUser.getEmail().replaceAll("(?<=.{2}).(?=[^@]*?@)", "*"));
         if (!isUserPresentByEmail(newUser.getEmail())) {
-            User user = usersRepository.save(UserMapper.newUserRequestToUser(newUser));
+            User user = usersRepository.save(UserMapper.INSTANT.newUserRequestToUser(newUser));
             log.debug("Пользователь создан. ID = {}.", user.getId());
-            return UserMapper.toUserDto(user);
+            return UserMapper.INSTANT.toUserDto(user);
         } else {
             log.error("Не удалось создать пользователя. Email уже занят.");
             throw new ConflictException("Данный адрес почты уже занят.");
@@ -50,7 +50,7 @@ public class UsersServiceImpl implements UsersService {
             Page<User> pagesByIds = usersRepository.getAllUsersById(pageRequest, usersIds);
             List<User> requests = pagesByIds.getContent();
             List<UserDto> requestsDto = requests.stream()
-                    .map(request -> UserMapper.toUserDto(request))
+                    .map(request -> UserMapper.INSTANT.toUserDto(request))
                     .collect(Collectors.toList());
             return requestsDto;
         } else {
@@ -58,7 +58,7 @@ public class UsersServiceImpl implements UsersService {
             Page<User> pages = usersRepository.findAll(pageRequest);
             List<User> requests = pages.getContent();
             List<UserDto> requestsDto = requests.stream()
-                    .map(request -> UserMapper.toUserDto(request))
+                    .map(request -> UserMapper.INSTANT.toUserDto(request))
                     .collect(Collectors.toList());
             return requestsDto;
         }
