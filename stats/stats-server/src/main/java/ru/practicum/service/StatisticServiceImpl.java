@@ -43,9 +43,9 @@ public class StatisticServiceImpl implements StatisticService {
     @Override
     @Transactional
     public EndpointHit save(EndpointHit endpointHit) {
-        Hit save = HitMapper.toHit(endpointHit);
+        Hit save = HitMapper.INSTANT.toHit(endpointHit);
         statisticRepository.save(save);
-        return HitMapper.toEndpointHit(save);
+        return HitMapper.INSTANT.toEndpointHit(save);
     }
 
     private LocalDateTime stringToLocalDate(String date) {

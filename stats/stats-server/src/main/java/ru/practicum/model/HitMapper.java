@@ -1,12 +1,11 @@
 package ru.practicum.model;
 
-import lombok.experimental.UtilityClass;
 import ru.practicum.dto.EndpointHit;
 
-@UtilityClass
-public final class HitMapper {
+public enum HitMapper {
+    INSTANT;
 
-    public static EndpointHit toEndpointHit(Hit hit) {
+    public EndpointHit toEndpointHit(Hit hit) {
         return new EndpointHit(
                 hit.getId(),
                 hit.getApp(),
@@ -16,7 +15,7 @@ public final class HitMapper {
         );
     }
 
-    public static Hit toHit(EndpointHit endpointHit) {
+    public Hit toHit(EndpointHit endpointHit) {
         return new Hit(
                 endpointHit.getId(),
                 endpointHit.getApp(),
